@@ -1,0 +1,48 @@
+{
+    "typescript.preferences.importModuleSpecifier": "project-relative",
+    "editor.formatOnSave": true,
+    "debug.saveBeforeStart": "none",
+    "typescript.tsdk": "node_modules\\typescript\\lib",
+    "editor.rulers": [
+      100
+    ],
+    "files.associations": {
+      ".env": "ini",
+      "env": "ini"
+    },
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },      
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[css]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[scss]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[html]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "exportall.config.folderListener": [
+      "/libs/nestjs-schemas/src/constants",
+      "/libs/nestjs-schemas/src/decorators/params",
+      "/libs/nestjs-schemas/src/decorators/swagger",
+      "/libs/nestjs-schemas/src/decorators/validators",
+      "/libs/nestjs-schemas/src/decorators/schemas",
+      "/libs/nestjs-schemas/src",
+      "/libs/nestjs-schemas/src/decorators",
+      "/libs/nestjs-schemas/src/helpers",
+      "/libs/nestjs-schemas/src/helpers/cast",
+      "/libs/nestjs-schemas/src/helpers/database",
+      "/libs/nestjs-schemas/src/helpers/transform-functions",
+      "/libs/nestjs-schemas/src/helpers/type",
+      "/libs/nestjs-schemas/src/pipes",
+      "/libs/nestjs-schemas/src/schemas",
+      "/libs/nestjs-schemas/src/types"
+    ]
+  }
