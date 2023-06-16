@@ -34,7 +34,7 @@ export class DummiesController extends BaseController<
 
   @Get('/:id')
   @ApiParamUUIDv4('id')
-  async findById(@Param(ParseUUIDv4Pipe) id: UUIDv4) {
+  async findById(@Param('id', ParseUUIDv4Pipe) id: UUIDv4) {
     return await super._findById(id);
   }
 
@@ -46,7 +46,7 @@ export class DummiesController extends BaseController<
   @Put('/:id')
   @ApiParamUUIDv4('id')
   async update(
-    @Param(ParseUUIDv4Pipe) id: UUIDv4,
+    @Param('id', ParseUUIDv4Pipe) id: UUIDv4,
     @Body() input: UpdateDummyDto,
   ): Promise<DummyDto> {
     return await super._update(id, input);
@@ -55,7 +55,7 @@ export class DummiesController extends BaseController<
   @Delete('/:id')
   @ApiParamUUIDv4('id')
   @HttpCode(204)
-  async delete(@Param(ParseUUIDv4Pipe) id: UUIDv4) {
+  async delete(@Param('id', ParseUUIDv4Pipe) id: UUIDv4) {
     return await super._delete(id);
   }
 }

@@ -271,7 +271,7 @@ export abstract class BaseService<
     id: TKeyType,
     options?: FindDocumentByIdOpts<V>,
   ): Promise<V | null> {
-    return await this.findDocumentById(id, options);
+    return await this.findOneDocument({ ...options, filter: { [this._model.getPk()]: id } });
   }
 
   /**
@@ -286,21 +286,18 @@ export abstract class BaseService<
   ): Promise<V> {
     data = await this.beforeSave<Partial<TDocument>>(data);
     const returnAs = <ClassConstructor<V>>(<unknown>options?.returnAs ?? this._returnAs);
-    console.log(data);
     const result = await this._model.insert(data, {
       ...options,
       ...this._getDefaultOptions<V>(returnAs),
       toObject: true,
     });
-
-    //console.log(result);
-
-    // const doc = !this._hasSubSchemas(returnAs) //
-    //   ? result
-    //   : await this.findDocumentById(result[]);
-
-    // TODO: reparar
-    return plainToInstance(returnAs, result, {
+    //
+    let doc: any = result;
+    if (result && typeof result[this._model.getPk()] !== undefined) {
+      doc = result[this._model.getPk()];
+    }
+    //
+    return plainToInstance(returnAs, doc, {
       ...this.defaultTransformOptions,
       ...options?.transformOptions,
     });
@@ -334,7 +331,7 @@ export abstract class BaseService<
       list.push(<TKeyType>(<unknown>result.insertedIds[k]));
     }
 
-    const docs = await this.findAllDocuments({ filter: { _id: { $in: list } } });
+    const docs = await this.findAllDocuments({ filter: { [this._model.getPk()]: { $in: list } } });
 
     return <V[]>(<unknown>plainToInstance(returnAs, docs, {
       ...this.defaultTransformOptions,
@@ -351,26 +348,26 @@ export abstract class BaseService<
     options?: UpdateOptions & {
       returnAs?: ClassConstructor<V>;
       transformOptions?: ClassTransformOptions;
-    },
+    } & { toObject?: true },
   ): Promise<V | null> {
     data = await this.beforeSave(data);
     const returnAs = <ClassConstructor<V>>(<unknown>options?.returnAs ?? this._returnAs);
     const result = await this._model.update(id, data, {
       ...options,
       ...this._getDefaultOptions<V>(returnAs),
+      toObject: true,
     });
-
-    // TODO: Reparar
-    /*const doc = 
-      !result || !this._hasSubSchemas(returnAs) ? result : await this.findDocumentById(result._id);*/
-    return plainToInstance(
-      returnAs,
-      {} /*doc*/,
-      {
-        ...this.defaultTransformOptions,
-        ...options?.transformOptions,
-      },
-    );
+    //
+    let doc: any = result;
+    const pk = this._model.getPk();
+    if (result && typeof (<any>(<unknown>result))[pk] !== undefined) {
+      doc = (<any>(<unknown>result))[pk];
+    }
+    //
+    return plainToInstance(returnAs, doc, {
+      ...this.defaultTransformOptions,
+      ...options?.transformOptions,
+    });
   }
 
   /**
@@ -475,11 +472,11 @@ export abstract class BaseService<
   }
 
   // Hooks
-  async beforeSave<T = TDocument, V = Partial<T>>(data: V): Promise<V> {
+  async beforeSave<T extends Partial<TDocument> = Partial<TDocument>>(data: T): Promise<T> {
     return data;
   }
 
-  async afterSave<T = TDocument, V = Partial<T>>(data: V): Promise<V> {
+  async afterSave<T extends Partial<TDocument> = Partial<TDocument>>(data: T): Promise<T> {
     return data;
   }
 

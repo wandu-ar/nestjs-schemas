@@ -19,13 +19,8 @@ export class DummiesService extends BaseService<
     super(_metadata, _model, DummyDto);
   }
 
-  // async beforeSave<Partial<Dummy>>(data: Partial<Dummy>) {
-  //   if (!data.id) data.id = v4();
-  //   return data;
-  // }
-
-  // async beforeSave(data: Partial<Dummy>) {
-  //   //if (!data.id) data.id = v4();
-  //   return data;
-  // }
+  async beforeSave<T extends Partial<Dummy>>(data: T) {
+    if (!data[DUMMY_PK]) data[DUMMY_PK] = v4();
+    return data;
+  }
 }
