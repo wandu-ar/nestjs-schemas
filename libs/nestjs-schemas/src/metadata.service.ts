@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { _MetadataStorageV1 } from './helpers/metadata-storage';
 
 @Injectable()
 export class MetadataService {
   private readonly _storage = _MetadataStorageV1;
+
+  constructor() {
+    Logger.debug('MetadataService from NestjsSchemasModule has been loaded.');
+  }
 
   /**
    * Get saved schemas from storage.

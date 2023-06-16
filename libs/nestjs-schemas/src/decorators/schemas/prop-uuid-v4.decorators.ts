@@ -1,57 +1,49 @@
 import { Schema } from 'mongoose';
-import ValidatorJS from 'validator';
 import {
   IsArray,
   ArrayMinSize,
   ArrayMaxSize,
-  IsEmail,
   IsNotEmpty,
   IsOptional,
-  IsString,
-  IsUrl,
-  MaxLength,
-  MinLength,
-  IsUUID,
-  UUIDVersion,
+  ValidateNested,
 } from 'class-validator';
 import { $Prop } from './prop.decorator';
 import { CommonPropOpts, Nullable, PropCommonOpts, PropertyOptions } from '../../types';
 import {
-  CastToStringArrayOptions,
-  CastToStringOptions,
+  CastToUUIDv4ArrayOptions,
+  CastToUUIDv4Options,
+  TransformToUUIDv4,
+  TransformToUUIDv4Array,
   TransformToString,
   TransformToStringArray,
 } from '../../helpers';
+import { DocumentExists } from '../validators';
+import { Binary } from 'mongodb';
 
-type PropStringCommonOpts = PropCommonOpts & {
-  minLenght?: number;
-  maxLenght?: number;
-  format?: string;
-  pattern?: RegExp;
+type PropUUIDv4CommonOpts = PropCommonOpts & {
+  ref?: string;
+  mustExists?: boolean;
   unique?: boolean;
-  isUrl?: boolean | ValidatorJS.IsURLOptions;
-  isEmail?: boolean | ValidatorJS.IsEmailOptions;
-  isUUID?: boolean | UUIDVersion;
 };
 
-export type PropStringOpts = Omit<PropStringCommonOpts, 'arrayMinSize' | 'arrayMaxSize'> & {
+export type PropUUIDv4Opts = Omit<PropUUIDv4CommonOpts, 'arrayMinSize' | 'arrayMaxSize'> & {
   arrayMinSize?: undefined;
   arrayMaxSize?: undefined;
-} & CastToStringOptions;
-export type PropStringOptionalOpts = Omit<PropStringOpts, 'default'> & {
-  default?: Nullable<PropStringOpts['default']>;
+} & CastToUUIDv4Options;
+export type PropUUIDv4OptionalOpts = Omit<PropUUIDv4Opts, 'default'> & {
+  default?: Nullable<PropUUIDv4Opts['default']>;
 };
-export type PropStringArrayOpts = PropStringCommonOpts & CastToStringArrayOptions;
-export type PropStringArrayOptionalOpts = Omit<PropStringArrayOpts, 'default'> & {
-  default?: Nullable<PropStringOpts['default']>;
+export type PropUUIDv4ArrayOpts = PropUUIDv4CommonOpts & CastToUUIDv4ArrayOptions;
+export type PropUUIDv4ArrayOptionalOpts = Omit<PropUUIDv4ArrayOpts, 'default'> & {
+  default?: Nullable<PropUUIDv4Opts['default']>;
 };
 type SetPropOptions =
-  | PropStringOpts
-  | PropStringOptionalOpts
-  | PropStringArrayOpts
-  | PropStringArrayOptionalOpts;
+  | PropUUIDv4Opts
+  | PropUUIDv4OptionalOpts
+  | PropUUIDv4ArrayOpts
+  | PropUUIDv4ArrayOptionalOpts;
 
-export function $PropString(opts: PropStringOpts = {}): PropertyDecorator {
+export function $PropUUIDv4(opts: PropUUIDv4Opts = {}): PropertyDecorator {
   return (target: any, property: any) => {
     setProp(
       {
@@ -66,7 +58,7 @@ export function $PropString(opts: PropStringOpts = {}): PropertyDecorator {
   };
 }
 
-export function $PropStringArray(opts: PropStringArrayOpts = {}): PropertyDecorator {
+export function $PropUUIDv4Array(opts: PropUUIDv4ArrayOpts = {}): PropertyDecorator {
   return (target: any, property: any) => {
     setProp(
       {
@@ -81,7 +73,7 @@ export function $PropStringArray(opts: PropStringArrayOpts = {}): PropertyDecora
   };
 }
 
-export function $PropStringOptional(opts: PropStringOptionalOpts = {}): PropertyDecorator {
+export function $PropUUIDv4Optional(opts: PropUUIDv4OptionalOpts = {}): PropertyDecorator {
   return (target: any, property: any) => {
     setProp(
       {
@@ -95,8 +87,8 @@ export function $PropStringOptional(opts: PropStringOptionalOpts = {}): Property
   };
 }
 
-export function $PropStringArrayOptional(
-  opts: PropStringArrayOptionalOpts = {},
+export function $PropUUIDv4ArrayOptional(
+  opts: PropUUIDv4ArrayOptionalOpts = {},
 ): PropertyDecorator {
   return (target: any, property: any) => {
     setProp(
@@ -119,10 +111,10 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
   const prop: Required<PropertyOptions> = {
     swagger: {
       type: 'string',
-      format: opts.format,
-      pattern: opts.pattern ? opts.pattern.toString() : undefined,
-      maxLength: opts.maxLenght,
-      minLength: opts.minLenght,
+      format: 'uuid v4 format',
+      example: opts.isArray
+        ? ['91d80098-b96d-4549-8d8c-35ae9a195093']
+        : '91d80098-b96d-4549-8d8c-35ae9a195093',
       nullable: opts.isOptional,
       default: opts.default,
       required: !opts.isOptional,
@@ -130,7 +122,7 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
       isArray: opts.isArray,
     },
     mongoose: {
-      type: !opts.isArray ? Schema.Types.String : [Schema.Types.String],
+      type: !opts.isArray ? Schema.Types.Buffer : [Schema.Types.Buffer],
       required: !opts.isOptional,
       default: opts.default,
       unique: opts.unique,
@@ -138,7 +130,7 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
     transformer: {
       expose: opts.exclude === true || opts.private === true ? false : true,
       exclude: opts.exclude === true || opts.private === true ? true : undefined,
-      type: () => String,
+      type: () => Binary,
       transform: [],
     },
     validators: [],
@@ -146,24 +138,33 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
   };
 
   // Set transform functions
-  const transformToTypeOpts = {
-    default: <any>(<unknown>opts.default),
+  const transformToTypeOpts: CastToUUIDv4Options = {
     nullString: opts.nullString,
     undefinedString: opts.undefinedString,
-    case: opts.case,
-    trim: opts.trim ?? true,
   };
 
   if (!opts.isArray) {
+    // To class only
     prop.transformer?.transform?.push([
-      TransformToString(transformToTypeOpts),
+      TransformToUUIDv4({
+        ...transformToTypeOpts,
+        default: <any>(<unknown>opts.default),
+      }),
       { toClassOnly: true },
     ]);
+    // To plain only
+    prop.transformer?.transform?.push([TransformToString(), { toPlainOnly: true }]);
   } else {
+    // To class only
     prop.transformer?.transform?.push([
-      TransformToStringArray(transformToTypeOpts),
+      TransformToUUIDv4Array({
+        ...transformToTypeOpts,
+        default: <any>(<unknown>opts.default),
+      }),
       { toClassOnly: true },
     ]);
+    // To plain only
+    prop.transformer?.transform?.push([TransformToStringArray(), { toPlainOnly: true }]);
   }
 
   // User custom transform chain fn
@@ -180,6 +181,11 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
     prop.validators.push(IsOptional({ each: opts.isArray }));
   }
 
+  // Document exists
+  if (opts.ref && opts.mustExists) {
+    prop.validators.push(DocumentExists(opts.ref, { each: opts.isArray }));
+  }
+
   // Type validation
   if (opts.isArray) {
     prop.validators.push(IsArray());
@@ -189,26 +195,7 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
     if (opts.arrayMaxSize > 0) prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
   }
 
-  prop.validators.push(IsString({ each: opts.isArray }));
-
-  // Lenght validation
-  if (opts.minLenght !== undefined)
-    prop.validators.push(MinLength(opts.minLenght, { each: opts.isArray }));
-  if (opts.maxLenght !== undefined)
-    prop.validators.push(MaxLength(opts.maxLenght, { each: opts.isArray }));
-
-  // Format validation
-  if (opts.isUrl !== undefined && opts.isUrl !== false) {
-    prop.validators.push(opts.isUrl === true ? IsUrl() : IsUrl(opts.isUrl));
-  }
-
-  if (opts.isEmail !== undefined && opts.isEmail !== false) {
-    prop.validators.push(opts.isEmail === true ? IsEmail() : IsEmail(opts.isEmail));
-  }
-
-  if (opts.isUUID !== undefined && opts.isUUID !== false) {
-    prop.validators.push(opts.isUUID === true ? IsUUID() : IsUUID(opts.isUUID));
-  }
+  prop.validators.push(ValidateNested({ each: opts.isArray }));
 
   // Other validations
   if (opts.validators !== undefined) {

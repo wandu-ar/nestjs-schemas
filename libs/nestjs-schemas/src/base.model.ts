@@ -1,15 +1,6 @@
-import {
-  FilterQuery,
-  Model,
-  QueryOptions,
-  Document,
-  startSession,
-  Aggregate,
-  PipelineStage,
-} from 'mongoose';
+import { FilterQuery, Model, QueryOptions, startSession, Aggregate, PipelineStage } from 'mongoose';
 import { SoftDeleteDocument, SoftDeleteModel } from 'mongoose-delete';
 import { DatabaseHelper } from './helpers';
-import { ObjectId } from './types';
 
 export type ToObjectOption = {
   toObject?: boolean;
@@ -77,10 +68,17 @@ export interface DeleteResult {
  * @see https://github.com/dsanel/mongoose-delete#method-overridden
  * @author Alejandro D. Guevara
  */
-export abstract class BaseModel<TDocument extends Document> {
+export abstract class BaseModel<
+  TDocument,
+  TKey extends string & keyof TDocument,
+  TKeyType = TDocument[TKey],
+> {
   protected _implementSoftDelete: boolean;
 
-  constructor(protected readonly _model: Model<TDocument>) {
+  constructor(
+    protected readonly _model: Model<TDocument>, //
+    protected readonly _pk: TKey,
+  ) {
     this._implementSoftDelete = typeof (<any>(<unknown>_model)).delete !== 'undefined';
   }
 
@@ -89,6 +87,10 @@ export abstract class BaseModel<TDocument extends Document> {
    */
   isSoftDeleteEnabled() {
     return this._implementSoftDelete;
+  }
+
+  getPk() {
+    return this._pk;
   }
 
   /**
@@ -189,8 +191,9 @@ export abstract class BaseModel<TDocument extends Document> {
   /**
    * Find a single document by id
    */
-  async findById(id: ObjectId, options?: FindByIdOptions<TDocument>) {
-    return await this.findOne({ _id: id }, options);
+  async findById(id: TKeyType, options?: FindByIdOptions<TDocument>) {
+    const filter: Record<string, TKeyType> = { [this._pk]: id };
+    return await this.findOne(filter, options);
   }
 
   /**
@@ -200,7 +203,7 @@ export abstract class BaseModel<TDocument extends Document> {
     try {
       const result = await this.findOne(filter, {
         ...options,
-        projection: { _id: 1 },
+        projection: { [this._pk]: 1 },
         toObject: true,
       });
       return result !== null;
@@ -212,8 +215,9 @@ export abstract class BaseModel<TDocument extends Document> {
   /**
    * Verify than id document exist
    */
-  async existsId(id: ObjectId, options?: ExistsOption) {
-    return await this.exists({ _id: id }, options);
+  async existsId(id: TKeyType, options?: ExistsOption) {
+    const filter: Record<string, TKeyType> = { [this._pk]: id };
+    return await this.exists(filter, options);
   }
 
   /**
@@ -245,12 +249,10 @@ export abstract class BaseModel<TDocument extends Document> {
   /**
    * Insert and return the id of new document
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async insert(data: Partial<TDocument>, options?: InsertOptions) {
     try {
-      const model = <Model<TDocument>>(<unknown>this._model);
-      const result = await model.create(data);
-      return result;
+      const result = await this._model.create(data); // return HydratedDocument<TDocument>
+      return options?.toObject !== true ? result : result.toObject();
     } catch (err: any) {
       throw DatabaseHelper.dispatchError(err);
     }
@@ -261,9 +263,7 @@ export abstract class BaseModel<TDocument extends Document> {
    */
   async insertMany(data: Partial<TDocument>[]) {
     try {
-      const model = <Model<TDocument>>(<unknown>this._model);
-      const result = await model.insertMany(data, { rawResult: true });
-      return result;
+      return await this._model.insertMany(data, { rawResult: true });
     } catch (err: any) {
       throw DatabaseHelper.dispatchError(err);
     }
@@ -332,7 +332,7 @@ export abstract class BaseModel<TDocument extends Document> {
   /**
    * Update and return a single document by id
    */
-  async update(id: ObjectId, data: Partial<TDocument>, options?: UpdateOptions) {
+  async update(id: TKeyType, data: Partial<TDocument>, options?: UpdateOptions) {
     try {
       const opts = { new: true, runValidators: true };
       if (!this._implementSoftDelete) {
@@ -347,19 +347,28 @@ export abstract class BaseModel<TDocument extends Document> {
       if (options?.softDelete === SoftDeleteEnum.ALL) {
         // update document - deleted and not deleted
         return !options?.toObject
-          ? await model.findOneAndUpdateWithDeleted({ _id: id }, data, opts).exec()
-          : await model.findOneAndUpdateWithDeleted({ _id: id }, data, opts).lean().exec();
+          ? await model.findOneAndUpdateWithDeleted({ [this._pk]: id }, data, opts).exec()
+          : await model
+              .findOneAndUpdateWithDeleted({ [this._pk]: id }, data, opts)
+              .lean()
+              .exec();
       } else if (options?.softDelete === SoftDeleteEnum.ONLY_DELETED) {
         // update only deleted document
         return !options?.toObject
-          ? await model.findOneAndUpdateDeleted({ _id: id }, data, opts).exec()
-          : await model.findOneAndUpdateDeleted({ _id: id }, data, opts).lean().exec();
+          ? await model.findOneAndUpdateDeleted({ [this._pk]: id }, data, opts).exec()
+          : await model
+              .findOneAndUpdateDeleted({ [this._pk]: id }, data, opts)
+              .lean()
+              .exec();
       }
 
       // default - update only not deleted document
       return !options?.toObject
-        ? await model.findOneAndUpdate({ _id: id }, data, opts).exec()
-        : await model.findOneAndUpdate({ _id: id }, data, opts).lean().exec();
+        ? await model.findOneAndUpdate({ [this._pk]: id }, data, opts).exec()
+        : await model
+            .findOneAndUpdate({ [this._pk]: id }, data, opts)
+            .lean()
+            .exec();
     } catch (err: any) {
       throw DatabaseHelper.dispatchError(err);
     }
@@ -416,8 +425,9 @@ export abstract class BaseModel<TDocument extends Document> {
   /**
    * Delete and return a single document by id
    */
-  async delete(id: ObjectId, options?: DeleteOptions) {
-    return await this.deleteOne({ _id: id }, options);
+  async delete(id: TKeyType, options?: DeleteOptions) {
+    const filter: Record<string, TKeyType> = { [this._pk]: id };
+    return await this.deleteOne(filter, options);
   }
 
   /**

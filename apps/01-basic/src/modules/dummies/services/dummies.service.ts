@@ -24,8 +24,8 @@ export class DummiesService extends BaseService<
   //   return data;
   // }
 
-  async beforeSave(data: Partial<Dummy>) {
-    //if (!data.id) data.id = v4();
-    return data;
-  }
+  // async beforeSave(data: Partial<Dummy>) {
+  //   //if (!data.id) data.id = v4();
+  //   return data;
+  // }
 }

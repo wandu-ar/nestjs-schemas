@@ -7,5 +7,6 @@ export * from './prop-number.decorators';
 export * from './prop-object-id.decorators';
 export * from './prop-string.decorators';
 export * from './prop-sub-schema.decorators';
+export * from './prop-uuid-v4.decorators';
 export * from './prop.decorator';
 export * from './schema.decorator';

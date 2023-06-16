@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { ClassConstructor, ClassTransformOptions, plainToInstance } from 'class-transformer';
-import { FilterQuery, Document, PipelineStage } from 'mongoose';
-import { ObjectId, RuleSet, SchemaDef } from './types';
+import { FilterQuery, PipelineStage } from 'mongoose';
+import { RuleSet, SchemaDef } from './types';
 import { defaultTransformOptions, METADATA } from './constants';
 import {
   BaseModel,
@@ -67,9 +67,11 @@ export type SearchResults<V> = {
  * @author Alejandro D. Guevara
  */
 export abstract class BaseService<
-  TDocument extends Document,
-  TModel extends BaseModel<TDocument>,
+  TDocument,
+  TKey extends string & keyof TDocument,
+  TModel extends BaseModel<TDocument, TKey, TKeyType>,
   TReturnDto,
+  TKeyType = TDocument[TKey],
 > {
   defaultTransformOptions: ClassTransformOptions = defaultTransformOptions;
 
@@ -266,10 +268,10 @@ export abstract class BaseService<
    * Find a single document by id
    */
   async findDocumentById<V = TReturnDto>(
-    id: ObjectId,
+    id: TKeyType,
     options?: FindDocumentByIdOpts<V>,
   ): Promise<V | null> {
-    return await this.findOneDocument({ ...options, filter: { _id: id } });
+    return await this.findDocumentById(id, options);
   }
 
   /**
@@ -280,17 +282,25 @@ export abstract class BaseService<
     options?: InsertOptions & {
       returnAs?: ClassConstructor<V>;
       transformOptions?: ClassTransformOptions;
-    },
+    } & { toObject?: true },
   ): Promise<V> {
     data = await this.beforeSave<Partial<TDocument>>(data);
     const returnAs = <ClassConstructor<V>>(<unknown>options?.returnAs ?? this._returnAs);
+    console.log(data);
     const result = await this._model.insert(data, {
       ...options,
       ...this._getDefaultOptions<V>(returnAs),
+      toObject: true,
     });
 
-    const doc = !this._hasSubSchemas(returnAs) ? result : await this.findDocumentById(result._id);
-    return plainToInstance(returnAs, doc, {
+    //console.log(result);
+
+    // const doc = !this._hasSubSchemas(returnAs) //
+    //   ? result
+    //   : await this.findDocumentById(result[]);
+
+    // TODO: reparar
+    return plainToInstance(returnAs, result, {
       ...this.defaultTransformOptions,
       ...options?.transformOptions,
     });
@@ -300,7 +310,7 @@ export abstract class BaseService<
    * Create many new documents
    */
   async createManyDocuments(data: Partial<TDocument>[]) {
-    data = await this.beforeSave(data);
+    data.map(async (item) => await this.beforeSave(item));
     const result = await this._model.insertMany(data);
     return result;
   }
@@ -319,9 +329,9 @@ export abstract class BaseService<
     const returnAs = <ClassConstructor<V>>(<unknown>options?.returnAs ?? this._returnAs);
 
     // make list
-    const list: ObjectId[] = [];
+    const list: TKeyType[] = [];
     for (const k in result.insertedIds) {
-      list.push(<ObjectId>(<unknown>result.insertedIds[k]));
+      list.push(<TKeyType>(<unknown>result.insertedIds[k]));
     }
 
     const docs = await this.findAllDocuments({ filter: { _id: { $in: list } } });
@@ -336,7 +346,7 @@ export abstract class BaseService<
    * Update a single document by id
    */
   async updateDocument<V = TReturnDto>(
-    id: ObjectId,
+    id: TKeyType,
     data: Partial<TDocument>,
     options?: UpdateOptions & {
       returnAs?: ClassConstructor<V>;
@@ -345,17 +355,22 @@ export abstract class BaseService<
   ): Promise<V | null> {
     data = await this.beforeSave(data);
     const returnAs = <ClassConstructor<V>>(<unknown>options?.returnAs ?? this._returnAs);
-    /*const result = */ await this._model.update(id, data, {
+    const result = await this._model.update(id, data, {
       ...options,
       ...this._getDefaultOptions<V>(returnAs),
     });
 
-    const doc = await this.findDocumentById(id);
-    //   !result || !this._hasSubSchemas(returnAs) ? result : await this.findDocumentById(result._id);
-    return plainToInstance(returnAs, doc, {
-      ...this.defaultTransformOptions,
-      ...options?.transformOptions,
-    });
+    // TODO: Reparar
+    /*const doc = 
+      !result || !this._hasSubSchemas(returnAs) ? result : await this.findDocumentById(result._id);*/
+    return plainToInstance(
+      returnAs,
+      {} /*doc*/,
+      {
+        ...this.defaultTransformOptions,
+        ...options?.transformOptions,
+      },
+    );
   }
 
   /**
@@ -402,7 +417,7 @@ export abstract class BaseService<
   /**
    * Delete and return affected
    */
-  async deleteDocument(id: ObjectId, options?: DeleteOptions) {
+  async deleteDocument(id: TKeyType, options?: DeleteOptions) {
     const result = <any>(<unknown>await this._model.delete(id, options));
     return this.calcAffectedDocuments(result);
   }
@@ -417,7 +432,7 @@ export abstract class BaseService<
   /**
    * Verify than id document exist
    */
-  async existsId(id: ObjectId, options?: ExistsOption) {
+  async existsId(id: TKeyType, options?: ExistsOption) {
     return await this._model.existsId(id, options);
   }
 
@@ -460,11 +475,11 @@ export abstract class BaseService<
   }
 
   // Hooks
-  async beforeSave<T = any>(data: T) {
+  async beforeSave<T = TDocument, V = Partial<T>>(data: V): Promise<V> {
     return data;
   }
 
-  async afterSave<T = any>(data: T) {
+  async afterSave<T = TDocument, V = Partial<T>>(data: V): Promise<V> {
     return data;
   }
 

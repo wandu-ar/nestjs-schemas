@@ -4,5 +4,6 @@ export * from './cast-to-number';
 export * from './cast-to-object-id';
 export * from './cast-to-pojo';
 export * from './cast-to-string';
+export * from './cast-to-uuid-v4';
 export * from './cast-to';
 export * from './common';

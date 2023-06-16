@@ -20,7 +20,9 @@ export class DocumentExistsValidator implements ValidatorConstraintInterface {
   constructor(
     // private readonly _config: ConfigService,
     private readonly _database: DatabaseService,
-  ) {}
+  ) {
+    Logger.debug('DocumentExistsValidator from NestjsSchemasModule has been loaded.');
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async validate(value: ObjectId, args: ValidationArguments) {
