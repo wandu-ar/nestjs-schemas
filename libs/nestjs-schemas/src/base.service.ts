@@ -293,8 +293,12 @@ export abstract class BaseService<
     });
     //
     let doc: any = result;
-    if (result && typeof result[this._model.getPk()] !== undefined) {
-      doc = result[this._model.getPk()];
+    if (
+      result &&
+      typeof result[this._model.getPk()] !== undefined &&
+      this._hasSubSchemas(returnAs)
+    ) {
+      doc = await this.findDocumentById(<TKeyType>result[this._model.getPk()]);
     }
     //
     return plainToInstance(returnAs, doc, {
@@ -359,9 +363,12 @@ export abstract class BaseService<
     });
     //
     let doc: any = result;
-    const pk = this._model.getPk();
-    if (result && typeof (<any>(<unknown>result))[pk] !== undefined) {
-      doc = (<any>(<unknown>result))[pk];
+    if (
+      result &&
+      typeof (<any>(<unknown>result))[this._model.getPk()] !== undefined &&
+      this._hasSubSchemas(returnAs)
+    ) {
+      doc = await this.findDocumentById(<TKeyType>(<any>(<unknown>result))[this._model.getPk()]);
     }
     //
     return plainToInstance(returnAs, doc, {
