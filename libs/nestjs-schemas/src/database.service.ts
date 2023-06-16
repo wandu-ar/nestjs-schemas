@@ -5,7 +5,7 @@ import { InjectConnection } from '@nestjs/mongoose';
 @Injectable()
 export class DatabaseService {
   constructor(@InjectConnection() private readonly connection: Connection) {
-    Logger.debug('DatabaseService from NestjsSchemasModule has been loaded.');
+    Logger.debug('DatabaseService from SchemasModule has been loaded.');
   }
 
   getConnection(): Connection {

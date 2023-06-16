@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import {
   registerDecorator,
   ValidationArguments,
@@ -8,6 +8,8 @@ import {
 } from 'class-validator';
 import { ObjectId } from '../../types';
 import { DatabaseService } from '../../database.service';
+import { ModuleSettings } from '../../interfaces';
+import { MODULE_OPTIONS_TOKEN } from '../../schemas.module-definition';
 
 /**
  * Verificar la existencia de un documento de mongo mediante su id
@@ -18,23 +20,23 @@ import { DatabaseService } from '../../database.service';
 @Injectable()
 export class DocumentExistsValidator implements ValidatorConstraintInterface {
   constructor(
-    // private readonly _config: ConfigService,
+    @Inject(MODULE_OPTIONS_TOKEN) private _settings: ModuleSettings,
     private readonly _database: DatabaseService,
   ) {
-    Logger.debug('DocumentExistsValidator from NestjsSchemasModule has been loaded.');
+    Logger.debug('DocumentExistsValidator from SchemasModule has been loaded.');
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async validate(value: ObjectId, args: ValidationArguments) {
-    // if (this._config.getOrThrow<string>('NODE_ENV') === 'test') {
-    //   return true;
-    // }
+    if (this._settings.nodeEnv === 'test' && this._settings.skipDocumentExistsValidatorInTest) {
+      return true;
+    }
     const [collection] = args.constraints;
     try {
       const conn = this._database.getConnection();
       const doc = await conn
         .collection(collection)
-        .findOne({ _id: value }, { projection: { _id: true } });
+        .findOne({ _id: value }, { projection: { _id: true } }); // TODO: Pasar a config
 
       return doc !== null;
     } catch (err) {

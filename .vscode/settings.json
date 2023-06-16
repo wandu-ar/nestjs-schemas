@@ -44,6 +44,7 @@
       "/libs/nestjs-schemas/src/schemas",
       "/libs/nestjs-schemas/src/types",
       "/libs/nestjs-schemas/src/helpers/testing",
-      "/libs/nestjs-schemas/src/helpers/transform"
+      "/libs/nestjs-schemas/src/helpers/transform",
+      "/libs/nestjs-schemas/src/interfaces"
     ]
   }

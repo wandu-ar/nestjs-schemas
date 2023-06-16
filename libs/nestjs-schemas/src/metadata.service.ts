@@ -7,7 +7,7 @@ export class MetadataService {
   private readonly _storage = _MetadataStorageV1;
 
   constructor() {
-    Logger.debug('MetadataService from NestjsSchemasModule has been loaded.');
+    Logger.debug('MetadataService from SchemasModule has been loaded.');
   }
 
   /**

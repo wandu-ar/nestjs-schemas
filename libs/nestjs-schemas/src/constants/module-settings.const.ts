@@ -1,0 +1,1 @@
+export const MODULE_SETTINGS = 'MODULE_SETTINGS';

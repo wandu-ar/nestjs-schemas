@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DUMMY_SCHEMA, DummySchema } from './schemas';
-import { NestjsSchemasModule } from '@wandu-ar/nestjs-schemas';
+import { SchemasModule } from '@wandu-ar/nestjs-schemas';
 import { DummiesController } from './controllers';
 import { DummiesModelService, DummiesService } from './services';
 
@@ -9,7 +9,7 @@ import { DummiesModelService, DummiesService } from './services';
   controllers: [DummiesController],
   imports: [
     MongooseModule.forFeature([{ name: DUMMY_SCHEMA, schema: DummySchema }]),
-    NestjsSchemasModule,
+    SchemasModule,
   ],
   providers: [DummiesModelService, DummiesService],
   exports: [],

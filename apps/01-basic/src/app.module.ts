@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DummiesModule } from './modules/dummies';
-import { NestjsSchemasModule } from '../../../libs/nestjs-schemas/src';
+import { SchemasModule } from '@wandu-ar/nestjs-schemas';
 import { AppService } from './app.service';
+import { JajajaModule } from './modules/jajaja/jajaja.module';
 
 @Module({
   imports: [
@@ -12,8 +13,14 @@ import { AppService } from './app.service';
         uri: 'mongodb://localhost:27017/nestjs-schemas-basic',
       }),
     }),
-    NestjsSchemasModule,
+    SchemasModule.forRootAsync({
+      useFactory: () => ({
+        nodeEnv: process.env.NODE_ENV || 'development',
+        skipDocumentExistsValidatorInTest: true,
+      }),
+    }),
     DummiesModule,
+    JajajaModule,
   ],
   providers: [AppService],
 })
