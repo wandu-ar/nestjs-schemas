@@ -11,7 +11,5 @@ export const dummyMockFactory = (options = dummyMockFactoryOptions) =>
 export const dummyMock = (staticFields?: Dummy, overrideOptions?: FactoryOptions<Dummy>): Dummy => {
   const dummyDocument = dummyMockFactory().generate(<any>(<unknown>staticFields), overrideOptions);
   // Other overrides
-  //return dummyDocument;
-  // TODO: reparar
-  return <Dummy>{};
+  return dummyDocument;
 };
