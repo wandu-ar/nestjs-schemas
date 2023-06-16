@@ -335,11 +335,12 @@ export abstract class BaseModel<
   async update(id: TKeyType, data: Partial<TDocument>, options?: UpdateOptions) {
     try {
       const opts = { new: true, runValidators: true };
+      const filter: Record<string, TKeyType> = { [this._pk]: id };
       if (!this._implementSoftDelete) {
         const model = <Model<TDocument>>(<unknown>this._model);
         return !options?.toObject
-          ? await model.findByIdAndUpdate(id, data, opts).exec()
-          : await model.findByIdAndUpdate(id, data, opts).lean().exec();
+          ? await model.findOneAndUpdate(filter, data, opts).exec()
+          : await model.findOneAndUpdate(filter, data, opts).lean().exec();
       }
 
       const model = <SoftDeleteModel<SoftDeleteDocument>>(<unknown>this._model);
@@ -347,28 +348,19 @@ export abstract class BaseModel<
       if (options?.softDelete === SoftDeleteEnum.ALL) {
         // update document - deleted and not deleted
         return !options?.toObject
-          ? await model.findOneAndUpdateWithDeleted({ [this._pk]: id }, data, opts).exec()
-          : await model
-              .findOneAndUpdateWithDeleted({ [this._pk]: id }, data, opts)
-              .lean()
-              .exec();
+          ? await model.findOneAndUpdateWithDeleted(filter, data, opts).exec()
+          : await model.findOneAndUpdateWithDeleted(filter, data, opts).lean().exec();
       } else if (options?.softDelete === SoftDeleteEnum.ONLY_DELETED) {
         // update only deleted document
         return !options?.toObject
-          ? await model.findOneAndUpdateDeleted({ [this._pk]: id }, data, opts).exec()
-          : await model
-              .findOneAndUpdateDeleted({ [this._pk]: id }, data, opts)
-              .lean()
-              .exec();
+          ? await model.findOneAndUpdateDeleted(filter, data, opts).exec()
+          : await model.findOneAndUpdateDeleted(filter, data, opts).lean().exec();
       }
 
       // default - update only not deleted document
       return !options?.toObject
-        ? await model.findOneAndUpdate({ [this._pk]: id }, data, opts).exec()
-        : await model
-            .findOneAndUpdate({ [this._pk]: id }, data, opts)
-            .lean()
-            .exec();
+        ? await model.findOneAndUpdate(filter, data, opts).exec()
+        : await model.findOneAndUpdate(filter, data, opts).lean().exec();
     } catch (err: any) {
       throw DatabaseHelper.dispatchError(err);
     }

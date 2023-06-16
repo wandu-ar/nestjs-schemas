@@ -19,7 +19,7 @@ export class DummiesService extends BaseService<
     super(_metadata, _model, DummyDto);
   }
 
-  async beforeSave<T extends Partial<Dummy>>(data: T) {
+  async beforeInsert<T extends Partial<Dummy>>(data: T) {
     if (!data[DUMMY_PK]) data[DUMMY_PK] = v4();
     return data;
   }

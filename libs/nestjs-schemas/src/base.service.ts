@@ -284,7 +284,7 @@ export abstract class BaseService<
       transformOptions?: ClassTransformOptions;
     } & { toObject?: true },
   ): Promise<V> {
-    data = await this.beforeSave<Partial<TDocument>>(data);
+    data = await this.beforeInsert<Partial<TDocument>>(data);
     const returnAs = <ClassConstructor<V>>(<unknown>options?.returnAs ?? this._returnAs);
     const result = await this._model.insert(data, {
       ...options,
@@ -311,7 +311,7 @@ export abstract class BaseService<
    * Create many new documents
    */
   async createManyDocuments(data: Partial<TDocument>[]) {
-    data.map(async (item) => await this.beforeSave(item));
+    data.map(async (item) => await this.beforeInsert(item));
     const result = await this._model.insertMany(data);
     return result;
   }
@@ -354,7 +354,7 @@ export abstract class BaseService<
       transformOptions?: ClassTransformOptions;
     } & { toObject?: true },
   ): Promise<V | null> {
-    data = await this.beforeSave(data);
+    data = await this.beforeUpdate(data);
     const returnAs = <ClassConstructor<V>>(<unknown>options?.returnAs ?? this._returnAs);
     const result = await this._model.update(id, data, {
       ...options,
@@ -479,11 +479,11 @@ export abstract class BaseService<
   }
 
   // Hooks
-  async beforeSave<T extends Partial<TDocument> = Partial<TDocument>>(data: T): Promise<T> {
+  async beforeInsert<T extends Partial<TDocument> = Partial<TDocument>>(data: T): Promise<T> {
     return data;
   }
 
-  async afterSave<T extends Partial<TDocument> = Partial<TDocument>>(data: T): Promise<T> {
+  async beforeUpdate<T extends Partial<TDocument> = Partial<TDocument>>(data: T): Promise<T> {
     return data;
   }
 
