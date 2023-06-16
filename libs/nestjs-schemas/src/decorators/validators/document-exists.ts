@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import {
   registerDecorator,
   ValidationArguments,
@@ -28,6 +28,7 @@ export class DocumentExistsValidator implements ValidatorConstraintInterface {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async validate(value: ObjectId, args: ValidationArguments) {
+    throw new InternalServerErrorException('NOT_IMPLEMENTED_YET');
     if (this._settings.nodeEnv === 'test' && this._settings.skipDocumentExistsValidatorInTest) {
       return true;
     }

@@ -3,7 +3,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { DummiesModule } from './modules/dummies';
 import { SchemasModule } from '@wandu-ar/nestjs-schemas';
 import { AppService } from './app.service';
-import { JajajaModule } from './modules/jajaja/jajaja.module';
+import { mode as uuidMode } from 'uuid-mongodb';
+
+// Set globally
+uuidMode('relaxed');
 
 @Module({
   imports: [
@@ -20,7 +23,6 @@ import { JajajaModule } from './modules/jajaja/jajaja.module';
       }),
     }),
     DummiesModule,
-    JajajaModule,
   ],
   providers: [AppService],
 })
