@@ -4,17 +4,10 @@ import { Test } from '@nestjs/testing';
 import { Connection } from 'mongoose';
 import * as request from 'supertest';
 import { useContainer } from 'class-validator';
-import { DatabaseService, ObjectId, PaginatedResponseDto, toPOJO } from '@wandu-ar/nestjs-schemas';
+import { DatabaseService, PaginatedResponseDto, toPOJO } from '@wandu-ar/nestjs-schemas';
 import { dummyStub, createDummyStub, updateDummyStub } from '../stubs';
-import { dummyMock } from '../mocks';
 import { AppModule } from '../../../../app.module';
-import {
-  instanceToInstance,
-  instanceToPlain,
-  plainToClass,
-  plainToInstance,
-} from 'class-transformer';
-import { CreateDummyDto, DummyDto } from '../../dtos';
+import { DummyDto } from '../../dtos';
 import { DUMMY_PK } from '../../schemas';
 import { from } from 'uuid-mongodb';
 
