@@ -4,12 +4,17 @@ import { Test } from '@nestjs/testing';
 import { Connection } from 'mongoose';
 import * as request from 'supertest';
 import { useContainer } from 'class-validator';
-import { DatabaseService, PaginatedResponseDto, toPOJO } from '@wandu-ar/nestjs-schemas';
+import {
+  DatabaseService,
+  PaginatedResponseDto,
+  castToUUIDv4Fn,
+  toPOJO,
+} from '@wandu-ar/nestjs-schemas';
 import { dummyStub, createDummyStub, updateDummyStub } from '../stubs';
 import { AppModule } from '../../../../app.module';
 import { DummyDto } from '../../dtos';
 import { DUMMY_PK } from '../../schemas';
-import { from } from 'uuid-mongodb';
+import { plainToInstance } from 'class-transformer';
 
 describe('DummiesController', () => {
   let dbConnection: Connection;
@@ -73,17 +78,17 @@ describe('DummiesController', () => {
         .set('Authorization', token);
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty(DUMMY_PK);
-      expect(response.body).toEqual(expect.objectContaining(entityObj));
+      const doc = plainToInstance(DummyDto, response.body);
+      expect(doc).toEqual(expect.objectContaining(entityObj));
       const id = response.body[DUMMY_PK] ?? null;
 
       // internal check
-      // TODO: Implementar con ObjectId
       const document = await dbConnection.collection('dummies').findOne({
-        [DUMMY_PK]: from(id),
+        [DUMMY_PK]: castToUUIDv4Fn(id),
       });
       expect(document).toEqual(expect.objectContaining(entityObj));
       expect(document).toHaveProperty(DUMMY_PK);
-      const dbId = (from(document?.[DUMMY_PK]) ?? null).toString();
+      const dbId = castToUUIDv4Fn(document?.[DUMMY_PK] ?? null).toString();
       expect(dbId).toEqual(id);
     });
   });
@@ -115,7 +120,7 @@ describe('DummiesController', () => {
         .insertOne({ ...stub, deleted: false });
       const _id = result.insertedId;
       const document = await dbConnection.collection('dummies').findOne({ _id });
-      const id = (from(document?.[DUMMY_PK]) ?? null).toString();
+      const id = (castToUUIDv4Fn(document?.[DUMMY_PK]) ?? null).toString();
 
       // external check
       const response = await request(httpServer)
@@ -129,21 +134,23 @@ describe('DummiesController', () => {
   describe('update', () => {
     it('should update a dummy document', async () => {
       const stub = dummyStub();
-      const updatedEntityObj = toPOJO(updateDummyStub());
       const result = await dbConnection
         .collection('dummies')
         .insertOne({ ...stub, deleted: false });
       const _id = result.insertedId;
       const document = await dbConnection.collection('dummies').findOne({ _id });
-      const id = (from(document?.[DUMMY_PK]) ?? null).toString();
+      const id = (castToUUIDv4Fn(document?.[DUMMY_PK]) ?? null).toString();
+      //
+      const entityObj = updateDummyStub();
 
       // check
       const response = await request(httpServer)
         .put('/dummies/' + id)
-        .send(updatedEntityObj)
+        .send(entityObj)
         .set('Authorization', token);
       expect(response.status).toBe(200);
-      expect(response.body).toEqual(expect.objectContaining(updatedEntityObj));
+      const doc = plainToInstance(DummyDto, response.body);
+      expect(doc).toEqual(expect.objectContaining(entityObj));
     });
   });
 
@@ -155,7 +162,7 @@ describe('DummiesController', () => {
         .insertOne({ ...stub, deleted: false });
       const _id = result.insertedId;
       const document = await dbConnection.collection('dummies').findOne({ _id });
-      const id = (from(document?.[DUMMY_PK]) ?? null).toString();
+      const id = (castToUUIDv4Fn(document?.[DUMMY_PK]) ?? null).toString();
 
       // external check
       const response = await request(httpServer)

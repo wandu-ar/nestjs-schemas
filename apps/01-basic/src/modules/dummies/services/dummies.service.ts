@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { BaseService, MetadataService } from '@wandu-ar/nestjs-schemas';
+import { BaseService, MetadataService, generateUUIDv4 } from '@wandu-ar/nestjs-schemas';
 import { DummiesModelService } from './dummies.model.service';
 import { DUMMY_PK, Dummy } from '../schemas';
 import { DummyDto } from '../dtos';
-import { v4 } from 'uuid-mongodb';
 
 @Injectable()
 export class DummiesService extends BaseService<
@@ -20,7 +19,14 @@ export class DummiesService extends BaseService<
   }
 
   async beforeInsert<T extends Partial<Dummy>>(data: T) {
-    if (!data[DUMMY_PK]) data[DUMMY_PK] = v4();
+    if (!data[DUMMY_PK]) data[DUMMY_PK] = generateUUIDv4();
+    if (!data['createdAt']) data['createdAt'] = new Date();
+    if (!data['updatedAt']) data['updatedAt'] = new Date(data['createdAt']);
+    return data;
+  }
+
+  async beforeUpdate<T extends Partial<Dummy>>(data: T) {
+    if (!data['updatedAt']) data['updatedAt'] = new Date();
     return data;
   }
 }

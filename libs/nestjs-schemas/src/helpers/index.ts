@@ -1,6 +1,7 @@
 export * from './cast';
 export * from './database';
 export * from './metadata-storage';
+export * from './mongodb';
 export * from './query-builder-parser';
 export * from './testing';
 export * from './transform';

@@ -1,4 +1,4 @@
-import { ObjectId } from '../../types';
+import { ObjectId } from '../mongodb';
 import { CastToOptions, castTo } from './cast-to';
 
 //export type CastToObjectId = {};

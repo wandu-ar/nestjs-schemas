@@ -1,19 +1,19 @@
 import { TransformFnParams } from 'class-transformer';
 import {
   CastToNumberOptions,
-  castToNumber as castToNumberFn,
+  castToNumber,
   CastToNumberArrayOptions,
-  castToNumberArray as castToNumberArrayFn,
+  castToNumberArray,
 } from '../cast';
 
 export function TransformToNumber(options: CastToNumberOptions = {}) {
   return (params: TransformFnParams) => {
-    return castToNumberFn(params.obj[params.key], options);
+    return castToNumber(params.obj[params.key], options);
   };
 }
 
 export function TransformToNumberArray(options: CastToNumberArrayOptions = {}) {
   return (params: TransformFnParams) => {
-    return castToNumberArrayFn(params.obj[params.key], options);
+    return castToNumberArray(params.obj[params.key], options);
   };
 }

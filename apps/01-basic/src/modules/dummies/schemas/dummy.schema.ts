@@ -1,9 +1,14 @@
 import { SchemaFactory } from '@nestjs/mongoose';
 import {
+  $PropBoolean,
+  $PropDate,
   $PropDateOptional,
+  $PropNumber,
+  $PropObjectId,
   $PropString,
   $PropUUIDv4,
   $Schema,
+  ObjectId,
   UUIDv4,
 } from '@wandu-ar/nestjs-schemas';
 import { HydratedDocument } from 'mongoose';
@@ -16,8 +21,8 @@ export const DUMMY_PK: 'id' & keyof Dummy = 'id';
 
 @$Schema({
   mongoose: {
-    timestamps: true,
     collection: DUMMIES_COLLECTION,
+    timestamps: true,
   },
 })
 export class Dummy {
@@ -25,13 +30,25 @@ export class Dummy {
   id!: UUIDv4;
 
   @$PropString()
-  text!: string;
+  stringExample!: string;
 
-  @$PropDateOptional()
-  createdAt: Date | null = null;
+  @$PropNumber()
+  numberExample!: number;
 
-  @$PropDateOptional()
-  updatedAt: Date | null = null;
+  @$PropBoolean()
+  booleanExample!: boolean;
+
+  @$PropDate()
+  dateExample!: Date;
+
+  @$PropObjectId()
+  objectIdExample!: ObjectId;
+
+  @$PropDate()
+  createdAt!: Date;
+
+  @$PropDate()
+  updatedAt!: Date;
 }
 
 export const DUMMY_SCHEMA = Dummy.name;

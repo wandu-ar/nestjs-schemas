@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 export type CastToOptions<T> = {
   default?: T | null;
   nullString?: boolean;
@@ -39,7 +41,9 @@ export function castTo<T, CastFnOptions = undefined>(
           newValue.push(castFn(element, castFnOptions));
         }
       }
-    } catch (_) {
+    } catch (err) {
+      console.error(err);
+      Logger.debug(err, 'Cast to FN error');
       newValue = castToOptions.default;
     }
   } else {

@@ -1,19 +1,19 @@
 import { TransformFnParams } from 'class-transformer';
 import {
   CastToStringOptions,
-  castToString as castToStringFn,
+  castToString,
   CastToStringArrayOptions,
-  castToStringArray as castToStringArrayFn,
+  castToStringArray,
 } from '../cast';
 
 export function TransformToString(options: CastToStringOptions = {}) {
   return (params: TransformFnParams) => {
-    return castToStringFn(params.obj[params.key], options);
+    return castToString(params.obj[params.key], options);
   };
 }
 
 export function TransformToStringArray(options: CastToStringArrayOptions = {}) {
   return (params: TransformFnParams) => {
-    return castToStringArrayFn(params.obj[params.key], options);
+    return castToStringArray(params.obj[params.key], options);
   };
 }

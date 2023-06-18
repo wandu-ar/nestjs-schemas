@@ -1,20 +1,32 @@
 import { faker } from '@faker-js/faker';
-//import { ObjectId } from '@wandu-ar/nestjs-schemas';
-import { v4 } from 'uuid-mongodb';
+import { generateUUIDv4, toPOJO } from '@wandu-ar/nestjs-schemas';
 import { Dummy } from '../../schemas';
 import { CreateDummyDto, UpdateDummyDto } from '../../dtos';
+import { dummyMock } from '../mocks';
+import { plainToInstance } from 'class-transformer';
 
-export const dummyStub = (): Dummy => ({
-  id: v4(),
-  text: faker.string.sample(),
-  createdAt: faker.date.past(),
-  updatedAt: faker.date.recent(),
-});
+export const dummyStub = (): Dummy => {
+  return dummyMock({
+    id: generateUUIDv4(),
+    dateExample: faker.date.anytime(),
+    createdAt: faker.date.past(),
+    updatedAt: faker.date.recent(),
+  });
+};
 
-export const createDummyStub = (): CreateDummyDto => ({
-  text: faker.string.sample(),
-});
+export const createDummyStub = (): CreateDummyDto => {
+  return plainToInstance(CreateDummyDto, toPOJO(dummyStub()), {
+    excludePrefixes: ['_', '__'],
+    exposeUnsetFields: true,
+    excludeExtraneousValues: true,
+  });
+};
 
-export const updateDummyStub = (): UpdateDummyDto => ({
-  text: faker.string.sample(),
-});
+export const updateDummyStub = (): UpdateDummyDto => {
+  return plainToInstance(UpdateDummyDto, toPOJO(dummyStub()), {
+    excludePrefixes: ['_', '__'],
+    exposeUnsetFields: true,
+    excludeExtraneousValues: true,
+    enableImplicitConversion: true,
+  });
+};

@@ -1,7 +1,7 @@
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 import { isUUID } from 'class-validator';
 import { from as UUIDv4From } from 'uuid-mongodb';
-import { UUIDv4 } from '../types';
+import { UUIDv4 } from '../helpers';
 
 @Injectable()
 export class ParseUUIDv4Pipe implements PipeTransform<string, UUIDv4> {

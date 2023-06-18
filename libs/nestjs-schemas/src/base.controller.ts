@@ -1,13 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { ClassConstructor } from 'class-transformer';
-//import { ObjectId } from './types';
 import { BaseModel, DeleteOptions } from './base.model';
-import {
-  BaseService,
-  //FindAllDocumentsOpts,
-  FindDocumentByIdOpts,
-  ListAllDocumentsOpts,
-} from './base.service';
+import { BaseService, FindDocumentByIdOpts, ListAllDocumentsOpts } from './base.service';
 import { ListParamsDto } from './schemas';
 
 /**

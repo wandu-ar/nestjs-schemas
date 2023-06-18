@@ -10,17 +10,8 @@ import {
   TypeHelpOptions,
   TypeOptions,
 } from 'class-transformer';
-import { MUUID } from 'uuid-mongodb';
-import { Binary } from 'mongodb';
 
 export type Nullable<T> = T | null;
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export import ObjectId = mongoose.Types.ObjectId;
-
-export type UUIDv4 = MUUID;
-
-export { Binary };
 
 export type PropType = {
   type: string;

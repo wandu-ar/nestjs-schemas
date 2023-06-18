@@ -8,6 +8,7 @@ import {
   MODULE_OPTIONS_TOKEN,
   OPTIONS_TYPE,
 } from './schemas.module-definition';
+import { mode } from 'uuid-mongodb';
 //import { ModuleSettings } from './interfaces';
 
 /**
@@ -18,6 +19,8 @@ import {
 class SchemasHostModule extends ConfigurableModuleClass {
   // Sync
   static forRoot(options: typeof OPTIONS_TYPE): DynamicModule {
+    // Set globally
+    mode('relaxed');
     return {
       ...super.forRoot(options),
       exports: [MODULE_OPTIONS_TOKEN],
@@ -25,6 +28,8 @@ class SchemasHostModule extends ConfigurableModuleClass {
   }
   // Async
   static forRootAsync(options: typeof ASYNC_OPTIONS_TYPE): DynamicModule {
+    // Set globally
+    mode('relaxed');
     return {
       ...super.forRootAsync(options),
       exports: [MODULE_OPTIONS_TOKEN],

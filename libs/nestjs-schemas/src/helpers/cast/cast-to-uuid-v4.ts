@@ -1,6 +1,6 @@
 import { isUUID } from 'class-validator';
 import { CastToOptions, castTo } from './cast-to';
-import { MUUID as UUIDv4, from as uuidV4From } from 'uuid-mongodb';
+import { MUUID as UUIDv4, from as toUUIDv4 } from 'uuid-mongodb';
 import { Binary } from 'mongodb';
 
 export type CastToUUIDv4 = {
@@ -22,9 +22,9 @@ export function castToUUIDv4Array(value: any, options: CastToUUIDv4ArrayOptions 
 export function castToUUIDv4Fn(value: any, options: CastToUUIDv4 = {}) {
   let newValue: UUIDv4;
   if (typeof value === 'string' && isUUID(value, '4')) {
-    newValue = uuidV4From(value);
+    newValue = toUUIDv4(value);
   } else if (typeof value === 'object' && value instanceof Binary) {
-    newValue = uuidV4From(value);
+    newValue = toUUIDv4(value);
   } else {
     throw new Error('Cast to uuid v4 error');
   }

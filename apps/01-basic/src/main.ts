@@ -4,6 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
+import { defaultTransformOptions } from '@wandu-ar/nestjs-schemas';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: true });
@@ -11,13 +12,14 @@ async function bootstrap() {
   // Global interceptors
   app.useGlobalInterceptors(
     new ClassSerializerInterceptor(app.get(Reflector), {
-      excludePrefixes: ['__'],
+      excludePrefixes: ['_', '__'],
     }),
   );
 
   // Don't use global pipes unless must be required
   app.useGlobalPipes(
     new ValidationPipe({
+      transformOptions: { ...defaultTransformOptions },
       transform: true,
       whitelist: true,
       validationError: {

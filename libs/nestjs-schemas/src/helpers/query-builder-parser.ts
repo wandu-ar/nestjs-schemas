@@ -1,7 +1,8 @@
-import { ObjectId, Rule, RuleSet } from '../types';
+import { Rule, RuleSet } from '../types';
 import { FilterQuery } from 'mongoose';
 import { BadRequestException, InternalServerErrorException, Logger } from '@nestjs/common';
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
+import { ObjectId } from './mongodb';
 
 export class QueryBuilderParser {
   private readonly conditions = {

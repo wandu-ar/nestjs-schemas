@@ -8,10 +8,11 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { $Prop } from './prop.decorator';
-import { CommonPropOpts, Nullable, ObjectId, PropCommonOpts, PropertyOptions } from '../../types';
+import { CommonPropOpts, Nullable, PropCommonOpts, PropertyOptions } from '../../types';
 import {
   CastToObjectIdArrayOptions,
   CastToObjectIdOptions,
+  ObjectId,
   TransformToObjectId,
   TransformToObjectIdArray,
   TransformToString,

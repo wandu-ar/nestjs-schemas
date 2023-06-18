@@ -6,9 +6,9 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { ObjectId } from '../../types';
 import { DatabaseService } from '../../database.service';
 import { ModuleSettings } from '../../interfaces';
+import { ObjectId } from '../../helpers';
 import { MODULE_OPTIONS_TOKEN } from '../../schemas.module-definition';
 
 /**
