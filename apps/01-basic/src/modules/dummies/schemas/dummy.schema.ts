@@ -2,7 +2,6 @@ import { SchemaFactory } from '@nestjs/mongoose';
 import {
   $PropBoolean,
   $PropDate,
-  $PropDateOptional,
   $PropNumber,
   $PropObjectId,
   $PropString,

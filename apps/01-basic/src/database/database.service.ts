@@ -4,11 +4,11 @@ import { InjectConnection } from '@nestjs/mongoose';
 
 @Injectable()
 export class DatabaseService {
-  constructor(@InjectConnection() private readonly connection: Connection) {
+  constructor(@InjectConnection() private readonly _default: Connection) {
     Logger.debug('DatabaseService from SchemasModule has been loaded.');
   }
 
-  getConnection(): Connection {
-    return this.connection;
+  getDefault(): Connection {
+    return this._default;
   }
 }

@@ -1,11 +1,17 @@
 import { Schema } from '@nestjs/mongoose';
 import { _MetadataStorageV1 } from '../../helpers/metadata-storage';
 import { SchemaOptions } from '../../types';
+import { METADATA } from '../../constants';
 
 export function $Schema(options: SchemaOptions = {}): ClassDecorator {
   return (target) => {
     // Add information to metadata storage
     _MetadataStorageV1.setSchema(target);
+
+    // Add metadata
+    if (options?.validation !== undefined) {
+      _MetadataStorageV1.setMetadata(METADATA.INTEGRITY_VALIDATION, options.validation, target);
+    }
 
     // Apply custom decorators
     if (options.decorators !== undefined) {

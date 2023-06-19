@@ -55,11 +55,11 @@ export class MetadataService {
   /**
    * Get saved prop metadata from storage
    */
-  getMetadata(
+  getMetadata<T = any>(
     key: string,
     schema: string | Function | Object, //
     property?: string,
-  ): any {
-    return this._storage.getMetadata(key, schema, property);
+  ) {
+    return this._storage.getMetadata<T>(key, schema, property);
   }
 }

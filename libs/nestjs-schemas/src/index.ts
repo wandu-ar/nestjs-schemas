@@ -2,7 +2,6 @@ export * from './base.controller';
 export * from './base.model';
 export * from './base.service';
 export * from './constants';
-export * from './database.service';
 export * from './decorators';
 export * from './helpers';
 export * from './interfaces';

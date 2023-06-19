@@ -7,8 +7,10 @@ export function $OmitType<T, K extends keyof T>(
   keys: readonly K[],
 ): Type<Omit<T, (typeof keys)[number]>> {
   const resultClass = NestJSSwaggerOmitType(classRef, keys);
+  // copy props definition
   _MetadataStorageV1.copyProps(classRef, resultClass, {
     excludeProps: keys.map((item) => item.toString()),
   });
+  // return new class
   return resultClass;
 }

@@ -46,8 +46,11 @@ export type MetadataModuleOptions = {
   isGlobal?: boolean;
 };
 
-export type SchemaOptions = {
+export type SchemaValidationFn<T = any> = (data: T) => void | never;
+
+export type SchemaOptions<T = any> = {
   mongoose?: mongoose.SchemaOptions;
+  validation?: SchemaValidationFn<T>;
   decorators?: { [key: string]: ClassDecorator[] };
 };
 

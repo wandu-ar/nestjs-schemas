@@ -4,10 +4,16 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
-import { defaultTransformOptions } from '@wandu-ar/nestjs-schemas';
+import {
+  MetadataService,
+  SchemaValidationPipe,
+  defaultTransformOptions,
+} from '@wandu-ar/nestjs-schemas';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: true });
+
+  const metadata = app.get(MetadataService);
 
   // Global interceptors
   app.useGlobalInterceptors(
@@ -27,6 +33,7 @@ async function bootstrap() {
         target: false,
       },
     }),
+    new SchemaValidationPipe(metadata),
   );
 
   // It allows class-validator to use NestJS dependency injection container.

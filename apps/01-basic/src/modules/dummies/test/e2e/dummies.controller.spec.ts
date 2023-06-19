@@ -4,17 +4,13 @@ import { Test } from '@nestjs/testing';
 import { Connection } from 'mongoose';
 import * as request from 'supertest';
 import { useContainer } from 'class-validator';
-import {
-  DatabaseService,
-  PaginatedResponseDto,
-  castToUUIDv4Fn,
-  toPOJO,
-} from '@wandu-ar/nestjs-schemas';
+import { PaginatedResponseDto, castToUUIDv4Fn, toPOJO } from '@wandu-ar/nestjs-schemas';
 import { dummyStub, createDummyStub, updateDummyStub } from '../stubs';
 import { AppModule } from '../../../../app.module';
 import { DummyDto } from '../../dtos';
 import { DUMMY_PK } from '../../schemas';
 import { plainToInstance } from 'class-transformer';
+import { DatabaseService } from '../../../../database';
 
 describe('DummiesController', () => {
   let dbConnection: Connection;
@@ -49,7 +45,7 @@ describe('DummiesController', () => {
       }),
     );
     await app.init();
-    dbConnection = moduleRef.get<DatabaseService>(DatabaseService).getConnection();
+    dbConnection = moduleRef.get<DatabaseService>(DatabaseService).getDefault();
     httpServer = app.getHttpServer();
 
     // Obtener fake access token
