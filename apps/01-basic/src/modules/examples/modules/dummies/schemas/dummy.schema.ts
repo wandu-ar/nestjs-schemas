@@ -1,6 +1,7 @@
 import { SchemaFactory } from '@nestjs/mongoose';
 import {
   $PropBoolean,
+  $PropBooleanOptional,
   $PropDate,
   $PropNumber,
   $PropObjectId,
@@ -35,8 +36,8 @@ export class Dummy {
   @$PropNumber()
   numberExample!: number;
 
-  @$PropBoolean()
-  booleanExample!: boolean;
+  @$PropBooleanOptional()
+  booleanExample!: boolean | null;
 
   @$PropDate()
   dateExample!: Date;

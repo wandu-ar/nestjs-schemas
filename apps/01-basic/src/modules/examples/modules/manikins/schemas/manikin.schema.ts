@@ -2,7 +2,7 @@ import { SchemaFactory } from '@nestjs/mongoose';
 import {
   $PropBoolean,
   $PropDate,
-  $PropNumber,
+  $PropNumberOptional,
   $PropObjectId,
   $PropString,
   $PropUUIDv4,
@@ -33,8 +33,8 @@ export class Manikin {
   @$PropString()
   stringExample!: string;
 
-  @$PropNumber()
-  numberExample!: number;
+  @$PropNumberOptional()
+  numberExample!: number | null;
 
   @$PropBoolean()
   booleanExample!: boolean;
