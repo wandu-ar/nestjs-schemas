@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { BaseService, MetadataService, generateUUIDv4 } from '@wandu-ar/nestjs-schemas';
+import { BaseService, MetadataService, generateUUIDv4 } from '@wandu/nestjs-schemas';
 import { DummiesModelService } from './dummies.model.service';
 import { DUMMY_PK, Dummy } from '../schemas';
 import { DummyDto } from '../dtos';

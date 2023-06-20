@@ -1,4 +1,4 @@
-import { $PartialType, $Schema } from '@wandu-ar/nestjs-schemas';
+import { $PartialType, $Schema } from '@wandu/nestjs-schemas';
 import { CreateManikinDto } from './create-manikin.dto';
 
 @$Schema()

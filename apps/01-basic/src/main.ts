@@ -8,7 +8,7 @@ import {
   MetadataService,
   SchemaValidationPipe,
   defaultTransformOptions,
-} from '@wandu-ar/nestjs-schemas';
+} from '@wandu/nestjs-schemas';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: true });

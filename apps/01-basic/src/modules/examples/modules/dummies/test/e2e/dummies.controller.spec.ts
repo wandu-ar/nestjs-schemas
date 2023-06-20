@@ -9,7 +9,7 @@ import {
   castToUUIDv4Fn,
   defaultTransformOptions,
   toPOJO,
-} from '@wandu-ar/nestjs-schemas';
+} from '@wandu/nestjs-schemas';
 import { dummyStub, createDummyStub, updateDummyStub } from '../stubs';
 import { AppModule } from '../../../../../../app.module';
 import { DummyDto } from '../../dtos';

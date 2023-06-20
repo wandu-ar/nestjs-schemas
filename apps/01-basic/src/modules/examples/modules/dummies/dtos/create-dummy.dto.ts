@@ -1,5 +1,5 @@
 import { Dummy } from '../schemas/dummy.schema';
-import { $Schema, $OmitType, DEFAULT_ID_FIELD_NAME } from '@wandu-ar/nestjs-schemas';
+import { $Schema, $OmitType, DEFAULT_ID_FIELD_NAME } from '@wandu/nestjs-schemas';
 
 @$Schema()
 export class CreateDummyDto extends $OmitType(Dummy, [

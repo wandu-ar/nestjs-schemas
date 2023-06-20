@@ -8,7 +8,7 @@ import {
   UUIDv4,
   ParseUUIDv4Pipe,
   DEFAULT_ID_FIELD_NAME,
-} from '@wandu-ar/nestjs-schemas';
+} from '@wandu/nestjs-schemas';
 
 import { CreateDummyDto, DummyDto, UpdateDummyDto } from '../dtos';
 import { Dummy, DUMMY_PK } from '../schemas';

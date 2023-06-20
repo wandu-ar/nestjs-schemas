@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { BaseService, MetadataService, generateUUIDv4 } from '@wandu-ar/nestjs-schemas';
+import { BaseService, MetadataService, generateUUIDv4 } from '@wandu/nestjs-schemas';
 import { ManikinsModelService } from './manikins.model.service';
 import { MANIKIN_PK, Manikin } from '../schemas';
 import { ManikinDto } from '../dtos';

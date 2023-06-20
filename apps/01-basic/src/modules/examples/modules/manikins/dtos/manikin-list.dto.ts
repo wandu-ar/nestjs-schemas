@@ -1,4 +1,4 @@
-import { $OmitType, $PropSubSchema, $Schema } from '@wandu-ar/nestjs-schemas';
+import { $OmitType, $PropSubSchema, $Schema } from '@wandu/nestjs-schemas';
 import { ManikinDto } from './manikin.dto';
 import { DUMMIES_COLLECTION, DummyDto } from '../../dummies';
 

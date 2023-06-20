@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DUMMY_SCHEMA, DummySchema } from './schemas';
-import { SchemasModule } from '@wandu-ar/nestjs-schemas';
+import { SchemasModule } from '@wandu/nestjs-schemas';
 import { DummiesController } from './controllers';
 import { DummiesModelService, DummiesService } from './services';
 

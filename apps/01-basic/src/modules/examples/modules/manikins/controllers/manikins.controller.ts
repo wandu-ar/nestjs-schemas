@@ -8,7 +8,7 @@ import {
   UUIDv4,
   ParseUUIDv4Pipe,
   DEFAULT_ID_FIELD_NAME,
-} from '@wandu-ar/nestjs-schemas';
+} from '@wandu/nestjs-schemas';
 
 import { CreateManikinDto, ManikinDto, UpdateManikinDto } from '../dtos';
 import { Manikin, MANIKIN_PK } from '../schemas';

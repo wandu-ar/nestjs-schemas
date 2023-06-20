@@ -19,10 +19,10 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@wandu-ar/nestjs-schemas": [
+      "@wandu/nestjs-schemas": [
         "libs/nestjs-schemas/src"
       ],
-      "@wandu-ar/nestjs-schemas/*": [
+      "@wandu/nestjs-schemas/*": [
         "libs/nestjs-schemas/src/*"
       ]
     }

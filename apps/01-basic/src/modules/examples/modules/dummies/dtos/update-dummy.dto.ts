@@ -1,4 +1,4 @@
-import { $PartialType, $Schema } from '@wandu-ar/nestjs-schemas';
+import { $PartialType, $Schema } from '@wandu/nestjs-schemas';
 import { CreateDummyDto } from './create-dummy.dto';
 
 @$Schema()

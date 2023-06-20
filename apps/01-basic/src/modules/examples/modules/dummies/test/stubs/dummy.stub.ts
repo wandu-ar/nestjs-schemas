@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { generateUUIDv4, toPOJO } from '@wandu-ar/nestjs-schemas';
+import { generateUUIDv4, toPOJO } from '@wandu/nestjs-schemas';
 import { Dummy } from '../../schemas';
 import { CreateDummyDto, UpdateDummyDto } from '../../dtos';
 import { dummyMock } from '../mocks';

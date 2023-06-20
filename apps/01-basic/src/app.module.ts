@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { SchemasModule } from '@wandu-ar/nestjs-schemas';
+import { SchemasModule } from '@wandu/nestjs-schemas';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database';
 import { ExamplesModule } from './modules';

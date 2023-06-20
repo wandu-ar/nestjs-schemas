@@ -10,7 +10,7 @@ import {
   DEFAULT_ID_FIELD_NAME,
   ObjectId,
   UUIDv4,
-} from '@wandu-ar/nestjs-schemas';
+} from '@wandu/nestjs-schemas';
 import { HydratedDocument } from 'mongoose';
 
 export type DummyDocument = HydratedDocument<Dummy>;

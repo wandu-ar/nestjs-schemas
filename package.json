@@ -1,11 +1,10 @@
 {
   "name": "@wandu/nestjs-schemas",
-  "version": "9.0.2",
+  "version": "9.0.3",
   "description": "Schemas library for NestJS",
   "main": "dist/libs/nestjs-schemas/index.js",
   "types": "dist/libs/nestjs-schemas/index.d.ts",
   "author": "Alejandro D. Guevara",
-  "private": true,
   "license": "ISC",
   "scripts": {
     "build": "rimraf dist && tsc --project libs/nestjs-schemas/tsconfig.lib.build.json",
@@ -34,7 +33,8 @@
     "nestjs",
     "modules",
     "metadata",
-    "reflection"
+    "reflection",
+    "schemas"
   ],
   "bugs": {
     "url": "https://github.com/wandu-ar/nestjs-schemas/issues"
@@ -104,7 +104,7 @@
       "<rootDir>/apps/"
     ],
     "moduleNameMapper": {
-      "^@wandu-ar/nestjs-schemas(|/.*)$": "<rootDir>/libs/nestjs-schemas/src/$1"
+      "^@wandu/nestjs-schemas(|/.*)$": "<rootDir>/libs/nestjs-schemas/src/$1"
     }
   }
 }

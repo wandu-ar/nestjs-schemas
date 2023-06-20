@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MANIKIN_SCHEMA, ManikinSchema } from './schemas';
-import { SchemasModule } from '@wandu-ar/nestjs-schemas';
+import { SchemasModule } from '@wandu/nestjs-schemas';
 import { ManikinsController } from './controllers';
 import { ManikinsModelService, ManikinsService } from './services';
 

@@ -1,4 +1,4 @@
-import { $Schema } from '@wandu-ar/nestjs-schemas';
+import { $Schema } from '@wandu/nestjs-schemas';
 import { DummyDto } from './dummy.dto';
 
 @$Schema()
