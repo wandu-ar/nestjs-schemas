@@ -23,7 +23,6 @@ import { MODULE_OPTIONS_TOKEN } from '../../schemas.module-definition';
 export class DocumentExistsValidator implements ValidatorConstraintInterface {
   private _connectionsMap: Record<string, Connection> = {};
 
-  // TODO: Optimize with cache
   constructor(
     @Inject(MODULE_OPTIONS_TOKEN) private readonly _settings: ModuleSettings,
     private readonly _moduleRef: ModuleRef,
