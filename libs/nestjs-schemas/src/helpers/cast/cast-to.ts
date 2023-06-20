@@ -43,7 +43,7 @@ export function castTo<T, CastFnOptions = undefined>(
       }
     } catch (err) {
       console.error(err);
-      Logger.debug(err, 'Cast to FN error');
+      Logger.debug(err, 'CastToFn');
       newValue = castToOptions.default;
     }
   } else {

@@ -166,6 +166,7 @@ function setProp<T>(
     if (opts.arrayMinSize > 0) prop.validators.push(ArrayMinSize(opts.arrayMinSize));
     if (opts.arrayMaxSize > 0) prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
   }
+
   prop.validators.push(ValidateNested({ each: opts.isArray }));
 
   // Other validations

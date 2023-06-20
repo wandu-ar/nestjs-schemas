@@ -1,12 +1,5 @@
 import { Schema } from 'mongoose';
-import {
-  IsArray,
-  ArrayMinSize,
-  ArrayMaxSize,
-  IsNotEmpty,
-  IsOptional,
-  ValidateNested,
-} from 'class-validator';
+import { IsArray, ArrayMinSize, ArrayMaxSize, IsNotEmpty, IsOptional } from 'class-validator';
 import { $Prop } from './prop.decorator';
 import { CommonPropOpts, Nullable, PropCommonOpts, PropertyOptions } from '../../types';
 import {
@@ -16,12 +9,12 @@ import {
   TransformToUUIDv4Array,
   TransformToString,
   TransformToStringArray,
+  Binary,
 } from '../../helpers';
-import { DocumentExists } from '../validators';
-import { Binary } from 'mongodb';
+import { DocumentExists, DocumentExistsOpts } from '../validators';
 
 type PropUUIDv4CommonOpts = PropCommonOpts & {
-  ref?: string;
+  ref?: string | DocumentExistsOpts;
   mustExists?: boolean;
   unique?: boolean;
 };
@@ -183,7 +176,8 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
 
   // Document exists
   if (opts.ref && opts.mustExists) {
-    prop.validators.push(DocumentExists(opts.ref, { each: opts.isArray }));
+    const existsOpts = typeof opts.ref === 'string' ? { collection: opts.ref } : { ...opts.ref };
+    prop.validators.push(DocumentExists(existsOpts, { each: opts.isArray }));
   }
 
   // Type validation
@@ -194,8 +188,6 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
     if (opts.arrayMinSize > 0) prop.validators.push(ArrayMinSize(opts.arrayMinSize));
     if (opts.arrayMaxSize > 0) prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
   }
-
-  prop.validators.push(ValidateNested({ each: opts.isArray }));
 
   // Other validations
   if (opts.validators !== undefined) {

@@ -12,20 +12,21 @@ import {
   UUIDv4,
 } from '@wandu-ar/nestjs-schemas';
 import { HydratedDocument } from 'mongoose';
+import { DUMMIES_COLLECTION } from '../../dummies';
 
-export type DummyDocument = HydratedDocument<Dummy>;
+export type ManikinDocument = HydratedDocument<Manikin>;
 
-export const DUMMIES_COLLECTION = 'dummies';
+export const MANIKINS_COLLECTION = 'manikins';
 
-export const DUMMY_PK: typeof DEFAULT_ID_FIELD_NAME & keyof Dummy = DEFAULT_ID_FIELD_NAME;
+export const MANIKIN_PK: typeof DEFAULT_ID_FIELD_NAME & keyof Manikin = DEFAULT_ID_FIELD_NAME;
 
 @$Schema({
   mongoose: {
-    collection: DUMMIES_COLLECTION,
+    collection: MANIKINS_COLLECTION,
     timestamps: true,
   },
 })
-export class Dummy {
+export class Manikin {
   @$PropUUIDv4()
   id!: UUIDv4;
 
@@ -44,6 +45,9 @@ export class Dummy {
   @$PropObjectId()
   objectIdExample!: ObjectId;
 
+  @$PropUUIDv4({ ref: DUMMIES_COLLECTION, mustExists: true })
+  dummy!: UUIDv4;
+
   @$PropDate()
   createdAt!: Date;
 
@@ -51,8 +55,8 @@ export class Dummy {
   updatedAt!: Date;
 }
 
-export const DUMMY_SCHEMA = Dummy.name;
-const DummySchema = SchemaFactory.createForClass(Dummy);
-DummySchema.index({ id: 1 }, { unique: true });
-DummySchema.index({ createdAt: 1 });
-export { DummySchema };
+export const MANIKIN_SCHEMA = Manikin.name;
+const ManikinSchema = SchemaFactory.createForClass(Manikin);
+ManikinSchema.index({ id: 1 }, { unique: true });
+ManikinSchema.index({ createdAt: 1 });
+export { ManikinSchema };

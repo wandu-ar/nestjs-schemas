@@ -1,5 +1,5 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
-import { DatabaseService } from './database.service';
+import { mode } from 'uuid-mongodb';
 import { DocumentExistsValidator } from './decorators';
 import { MetadataService } from './metadata.service';
 import {
@@ -8,8 +8,6 @@ import {
   MODULE_OPTIONS_TOKEN,
   OPTIONS_TYPE,
 } from './schemas.module-definition';
-import { mode } from 'uuid-mongodb';
-//import { ModuleSettings } from './interfaces';
 
 /**
  * Almacena la config del módulo de forma global
@@ -41,8 +39,8 @@ class SchemasHostModule extends ConfigurableModuleClass {
  * Módulo para que se generen singletones al importar el módulo
  */
 @Module({
-  providers: [MetadataService, DatabaseService, DocumentExistsValidator],
-  exports: [MetadataService, DatabaseService, DocumentExistsValidator],
+  providers: [MetadataService, DocumentExistsValidator],
+  exports: [MetadataService, DocumentExistsValidator],
 })
 class SchemasSharedModule {}
 

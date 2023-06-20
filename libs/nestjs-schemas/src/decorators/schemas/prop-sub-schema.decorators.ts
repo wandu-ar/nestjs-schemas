@@ -10,7 +10,7 @@ import { $Prop } from './prop.decorator';
 import { CommonPropOpts, Nullable, PropCommonOpts, PropertyOptions } from '../../types';
 import { ClassConstructor } from 'class-transformer';
 import { $Metadata } from './metadata.decorator';
-import { METADATA } from '../../constants/metadata.const';
+import { METADATA, DEFAULT_ID_FIELD_NAME } from '../../constants';
 
 type PropSubSchemaCommonOpts = PropCommonOpts & {
   lookup: Omit<LookupOpts, 'justOne'> | string;
@@ -158,7 +158,7 @@ function setProp<T>(
   const lookup: LookupOpts = {
     from: typeof opts.lookup === 'string' ? opts.lookup : opts.lookup.from,
     localField: property,
-    foreignField: '_id',
+    foreignField: DEFAULT_ID_FIELD_NAME,
     justOne: !opts.isArray,
     preserveNullAndEmptyArrays: opts.isOptional,
   };

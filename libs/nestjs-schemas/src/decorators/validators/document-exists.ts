@@ -10,6 +10,7 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { ModuleSettings } from '../../interfaces';
+import { DEFAULT_ID_FIELD_NAME } from '../../constants';
 import { MODULE_OPTIONS_TOKEN } from '../../schemas.module-definition';
 
 /**
@@ -20,8 +21,11 @@ import { MODULE_OPTIONS_TOKEN } from '../../schemas.module-definition';
 @ValidatorConstraint({ name: 'documentExists', async: true })
 @Injectable()
 export class DocumentExistsValidator implements ValidatorConstraintInterface {
+  private _connectionsMap: Record<string, Connection> = {};
+
+  // TODO: Optimize with cache
   constructor(
-    @Inject(MODULE_OPTIONS_TOKEN) private readonly _settings: ModuleSettings, //private readonly _database: DatabaseService,
+    @Inject(MODULE_OPTIONS_TOKEN) private readonly _settings: ModuleSettings,
     private readonly _moduleRef: ModuleRef,
   ) {
     Logger.debug('DocumentExistsValidator from SchemasModule has been loaded.');
@@ -32,10 +36,10 @@ export class DocumentExistsValidator implements ValidatorConstraintInterface {
     if (this._settings.nodeEnv === 'test' && this._settings.skipDocumentExistsValidatorInTest) {
       return true;
     }
+    if (!value) return false;
     try {
       const opts = this.getOpts(args);
-      const connToken = getConnectionToken(opts.connectionName);
-      const conn = this._moduleRef.get<Connection>(connToken);
+      const conn = this.getConnection(opts.connectionName);
       const doc = await conn
         .collection(opts.collection)
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -50,30 +54,32 @@ export class DocumentExistsValidator implements ValidatorConstraintInterface {
 
   getOpts(args: ValidationArguments): DocumentExistsOpts {
     const [opts] = <DocumentExistsOpts[]>args.constraints;
-    if (typeof opts === 'string') {
-      return {
-        collection: opts,
-        connectionName: undefined,
-        field: 'id',
-      };
-    } else {
-      return {
-        collection: opts.collection,
-        connectionName: opts.connectionName,
-        field: opts.field ?? 'id',
-      };
+    return {
+      collection: opts.collection,
+      connectionName: opts.connectionName,
+      field: opts.field ?? DEFAULT_ID_FIELD_NAME,
+    };
+  }
+
+  getConnection(connectionName?: string): Connection {
+    const connToken = getConnectionToken(connectionName);
+    if (!this._connectionsMap[connToken]) {
+      this._connectionsMap[connToken] = this._moduleRef.get<Connection>(connToken, {
+        strict: false,
+      });
     }
+    return this._connectionsMap[connToken];
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   defaultMessage(args: ValidationArguments) {
-    const [collection] = args.constraints;
-    return `Document not found in ${collection} collection.`;
+    const [opts] = <DocumentExistsOpts[]>args.constraints;
+    return `Document not found in ${opts.collection} collection.`;
   }
 }
 
 export function DocumentExists(
-  opts: string | DocumentExistsOpts,
+  opts: DocumentExistsOpts,
   validationOptions?: ValidationOptions,
 ): PropertyDecorator {
   return function (object: any, propertyName: any) {
