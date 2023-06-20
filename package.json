@@ -1,6 +1,6 @@
 {
   "name": "@wandu/nestjs-schemas",
-  "version": "9.0.5",
+  "version": "9.0.6",
   "description": "Schemas library for NestJS",
   "main": "dist/libs/nestjs-schemas/index.js",
   "types": "dist/libs/nestjs-schemas/index.d.ts",
