@@ -6,6 +6,7 @@ test
 scripts
 node_modules
 nest-cli.json
+tsconfig.*
 
 .editorconfig
 .prettierrc
