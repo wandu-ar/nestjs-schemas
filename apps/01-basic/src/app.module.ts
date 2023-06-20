@@ -4,7 +4,6 @@ import { SchemasModule } from '@wandu-ar/nestjs-schemas';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database';
 import { ExamplesModule } from './modules';
-import { RouterModule } from '@nestjs/core';
 import { AppRoutingModule } from './app-routing.module';
 
 @Module({
