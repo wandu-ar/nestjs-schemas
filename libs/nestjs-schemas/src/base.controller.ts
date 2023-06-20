@@ -48,7 +48,7 @@ export abstract class BaseController<
     return await this._service.listAllDocuments<V>({
       searchQuery: params.query,
       filter: params.filter,
-      limit: params.limit ?? 10, // TODO: Pasar a config
+      limit: params.limit ?? 100,
       offset: params.offset ?? 0,
       sort: params.sort,
       ...options,

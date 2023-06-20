@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { BaseService, MetadataService, generateUUIDv4 } from '@wandu-ar/nestjs-schemas';
 import { ManikinsModelService } from './manikins.model.service';
 import { MANIKIN_PK, Manikin } from '../schemas';
@@ -16,6 +16,7 @@ export class ManikinsService extends BaseService<
     protected readonly _model: ManikinsModelService,
   ) {
     super(_metadata, _model, ManikinDto);
+    Logger.debug('ManikinsService has been loaded.');
   }
 
   async beforeInsert<T extends Partial<Manikin>>(data: T) {

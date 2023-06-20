@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { BaseService, MetadataService, generateUUIDv4 } from '@wandu-ar/nestjs-schemas';
 import { DummiesModelService } from './dummies.model.service';
 import { DUMMY_PK, Dummy } from '../schemas';
@@ -16,6 +16,7 @@ export class DummiesService extends BaseService<
     protected readonly _model: DummiesModelService,
   ) {
     super(_metadata, _model, DummyDto);
+    Logger.debug('DummiesService has been loaded.');
   }
 
   async beforeInsert<T extends Partial<Dummy>>(data: T) {

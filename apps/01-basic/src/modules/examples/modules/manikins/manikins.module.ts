@@ -12,6 +12,6 @@ import { ManikinsModelService, ManikinsService } from './services';
     SchemasModule,
   ],
   providers: [ManikinsModelService, ManikinsService],
-  exports: [],
+  exports: [ManikinsService],
 })
 export class ManikinsModule {}

@@ -101,9 +101,19 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
   if (opts.isOptional && opts.default === undefined) {
     opts.default = null;
   }
+  // Ref opts
+  const ref = opts.ref
+    ? typeof opts.ref === 'string'
+      ? { collection: opts.ref }
+      : { ...opts.ref }
+    : undefined;
+  //
   const prop: Required<PropertyOptions> = {
     swagger: {
       type: 'string',
+      description: ref
+        ? `Reference to ${ref.field ? ref.field : 'id'} field of ${ref.collection} documents`
+        : undefined,
       format: 'uuid v4 format',
       example: opts.isArray
         ? ['91d80098-b96d-4549-8d8c-35ae9a195093']
@@ -175,9 +185,8 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
   }
 
   // Document exists
-  if (opts.ref && opts.mustExists) {
-    const existsOpts = typeof opts.ref === 'string' ? { collection: opts.ref } : { ...opts.ref };
-    prop.validators.push(DocumentExists(existsOpts, { each: opts.isArray }));
+  if (ref && opts.mustExists) {
+    prop.validators.push(DocumentExists(ref, { each: opts.isArray }));
   }
 
   // Type validation

@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { DatabaseModule } from './database';
 import { ExamplesModule } from './modules';
 import { RouterModule } from '@nestjs/core';
+import { AppRoutingModule } from './app-routing.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { RouterModule } from '@nestjs/core';
         skipDocumentExistsValidatorInTest: true,
       }),
     }),
-    RouterModule.register([{ path: 'examples', module: ExamplesModule }]),
+    ExamplesModule,
+    AppRoutingModule,
   ],
   providers: [AppService],
 })

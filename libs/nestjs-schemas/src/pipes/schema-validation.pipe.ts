@@ -29,16 +29,18 @@ export class SchemaValidationPipe implements PipeTransform<any> {
         METADATA.INTEGRITY_VALIDATION,
         metadata.metatype,
       );
-      // run basic validation
-      const keys = Object.keys(value);
-      let hasSomething = false;
-      for (const k of keys) {
-        if (value[k] !== undefined) {
-          hasSomething = true;
-          break;
+      // run basic validation on body
+      if (metadata.type === 'body') {
+        const keys = Object.keys(value);
+        let hasSomething = false;
+        for (const k of keys) {
+          if (value[k] !== undefined) {
+            hasSomething = true;
+            break;
+          }
         }
+        if (!hasSomething) throw new BadRequestException(`Type ${metadata.type} is empty`);
       }
-      if (!hasSomething) throw new BadRequestException(`Type ${metadata.type} is empty`);
       // run custom validation
       if (validationFn) validationFn(value);
     }

@@ -12,6 +12,6 @@ import { DummiesModelService, DummiesService } from './services';
     SchemasModule,
   ],
   providers: [DummiesModelService, DummiesService],
-  exports: [],
+  exports: [DummiesService],
 })
 export class DummiesModule {}
