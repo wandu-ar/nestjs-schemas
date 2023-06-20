@@ -5,6 +5,7 @@ src
 test
 scripts
 node_modules
+nest-cli.json
 
 .editorconfig
 .prettierrc
