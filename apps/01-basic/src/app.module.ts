@@ -3,7 +3,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { SchemasModule } from '@wandu-ar/nestjs-schemas';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database';
-import { DummiesModule, ManikinsModule } from './modules';
+import { ExamplesModule } from './modules';
+import { RouterModule } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -19,8 +20,7 @@ import { DummiesModule, ManikinsModule } from './modules';
         skipDocumentExistsValidatorInTest: true,
       }),
     }),
-    DummiesModule,
-    ManikinsModule,
+    RouterModule.register([{ path: 'examples', module: ExamplesModule }]),
   ],
   providers: [AppService],
 })

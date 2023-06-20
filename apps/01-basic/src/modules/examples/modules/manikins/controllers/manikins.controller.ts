@@ -10,25 +10,25 @@ import {
   DEFAULT_ID_FIELD_NAME,
 } from '@wandu-ar/nestjs-schemas';
 
-import { CreateDummyDto, DummyDto, UpdateDummyDto } from '../dtos';
-import { Dummy, DUMMY_PK } from '../schemas';
-import { DummiesModelService, DummiesService } from '../services';
+import { CreateManikinDto, ManikinDto, UpdateManikinDto } from '../dtos';
+import { Manikin, MANIKIN_PK } from '../schemas';
+import { ManikinsModelService, ManikinsService } from '../services';
 
-@ApiTags('Dummies')
-@Controller('/dummies')
-export class DummiesController extends BaseController<
-  Dummy,
-  typeof DUMMY_PK,
-  DummiesModelService,
-  DummiesService,
-  DummyDto
+@ApiTags('Manikins')
+@Controller()
+export class ManikinsController extends BaseController<
+  Manikin,
+  typeof MANIKIN_PK,
+  ManikinsModelService,
+  ManikinsService,
+  ManikinDto
 > {
-  constructor(protected readonly service: DummiesService) {
+  constructor(protected readonly service: ManikinsService) {
     super(service);
   }
 
   @Get('/')
-  @ApiPaginatedResponse(DummyDto)
+  @ApiPaginatedResponse(ManikinDto)
   async listAll(@Query() params: ListParamsDto) {
     return await super._listAllDocuments(params);
   }
@@ -40,7 +40,7 @@ export class DummiesController extends BaseController<
   }
 
   @Post('/')
-  async create(@Body() input: CreateDummyDto): Promise<DummyDto> {
+  async create(@Body() input: CreateManikinDto): Promise<ManikinDto> {
     return await super._create(input);
   }
 
@@ -48,8 +48,8 @@ export class DummiesController extends BaseController<
   @ApiParamUUIDv4(DEFAULT_ID_FIELD_NAME)
   async update(
     @Param(DEFAULT_ID_FIELD_NAME, ParseUUIDv4Pipe) id: UUIDv4,
-    @Body() input: UpdateDummyDto,
-  ): Promise<DummyDto> {
+    @Body() input: UpdateManikinDto,
+  ): Promise<ManikinDto> {
     return await super._update(id, input);
   }
 
