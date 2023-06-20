@@ -4,12 +4,17 @@ import { Test } from '@nestjs/testing';
 import { Connection } from 'mongoose';
 import * as request from 'supertest';
 import { useContainer } from 'class-validator';
-import { PaginatedResponseDto, castToUUIDv4Fn, toPOJO } from '@wandu-ar/nestjs-schemas';
+import { plainToInstance } from 'class-transformer';
+import {
+  PaginatedResponseDto,
+  castToUUIDv4Fn,
+  defaultTransformOptions,
+  toPOJO,
+} from '@wandu-ar/nestjs-schemas';
 import { manikinStub, createManikinStub, updateManikinStub } from '../stubs';
 import { AppModule } from '../../../../app.module';
-import { ManikinDto } from '../../dtos';
+import { CreateManikinDto, ManikinDto } from '../../dtos';
 import { MANIKIN_PK } from '../../schemas';
-import { plainToInstance } from 'class-transformer';
 import { DatabaseService } from '../../../../database';
 
 describe('ManikinsController', () => {
@@ -30,13 +35,14 @@ describe('ManikinsController', () => {
     // Global interceptors
     app.useGlobalInterceptors(
       new ClassSerializerInterceptor(app.get(Reflector), {
-        excludePrefixes: ['__'],
+        excludePrefixes: ['_', '__'],
       }),
     );
 
     app.useGlobalPipes(
       new ValidationPipe({
         transform: true,
+        transformOptions: { ...defaultTransformOptions },
         whitelist: true,
         validationError: {
           target: false,
@@ -66,23 +72,24 @@ describe('ManikinsController', () => {
   describe('create', () => {
     it('should create a manikin document', async () => {
       const entityObj = createManikinStub();
+      const entityPOJO = toPOJO(entityObj);
 
       // external check
       const response = await request(httpServer)
         .post('/manikins')
-        .send(entityObj)
+        .send(entityPOJO)
         .set('Authorization', token);
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty(MANIKIN_PK);
-      const doc = plainToInstance(ManikinDto, response.body);
-      expect(doc).toEqual(expect.objectContaining(entityObj));
+      const body = plainToInstance(ManikinDto, response.body, defaultTransformOptions);
+      expect(toPOJO(body)).toEqual(expect.objectContaining(entityPOJO));
       const id = response.body[MANIKIN_PK] ?? null;
 
       // internal check
       const document = await dbConnection.collection('manikins').findOne({
         [MANIKIN_PK]: castToUUIDv4Fn(id),
       });
-      expect(document).toEqual(expect.objectContaining(entityObj));
+      expect(toPOJO(document)).toEqual(expect.objectContaining(entityPOJO));
       expect(document).toHaveProperty(MANIKIN_PK);
       const dbId = castToUUIDv4Fn(document?.[MANIKIN_PK] ?? null).toString();
       expect(dbId).toEqual(id);
@@ -138,15 +145,16 @@ describe('ManikinsController', () => {
       const id = (castToUUIDv4Fn(document?.[MANIKIN_PK]) ?? null).toString();
       //
       const entityObj = updateManikinStub();
+      const entityPOJO = toPOJO(entityObj);
 
       // check
       const response = await request(httpServer)
         .put('/manikins/' + id)
-        .send(entityObj)
+        .send(entityPOJO)
         .set('Authorization', token);
       expect(response.status).toBe(200);
-      const doc = plainToInstance(ManikinDto, response.body);
-      expect(doc).toEqual(expect.objectContaining(entityObj));
+      const body = plainToInstance(ManikinDto, response.body, defaultTransformOptions);
+      expect(toPOJO(body)).toEqual(expect.objectContaining(entityPOJO));
     });
   });
 

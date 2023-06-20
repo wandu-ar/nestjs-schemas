@@ -25,8 +25,8 @@ async function bootstrap() {
   // Don't use global pipes unless must be required
   app.useGlobalPipes(
     new ValidationPipe({
-      transformOptions: { ...defaultTransformOptions },
       transform: true,
+      transformOptions: { ...defaultTransformOptions },
       whitelist: true,
       validationError: {
         value: false,

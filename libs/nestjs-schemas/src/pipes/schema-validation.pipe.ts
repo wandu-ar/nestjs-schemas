@@ -19,16 +19,26 @@ export class SchemaValidationPipe implements PipeTransform<any> {
   ) {}
 
   async transform(value: any, metadata: ArgumentMetadata) {
-    if (metadata.metatype && this._metadata.schemaExists(metadata.metatype)) {
+    if (
+      value &&
+      typeof value === 'object' &&
+      metadata.metatype &&
+      this._metadata.schemaExists(metadata.metatype)
+    ) {
       const validationFn = this._metadata.getMetadata<SchemaValidationFn>(
         METADATA.INTEGRITY_VALIDATION,
         metadata.metatype,
       );
       // run basic validation
-      if (JSON.stringify(value) === '{}') {
-        throw new BadRequestException(`Type ${metadata.type} is empty`);
+      const keys = Object.keys(value);
+      let hasSomething = false;
+      for (const k of keys) {
+        if (value[k] !== undefined) {
+          hasSomething = true;
+          break;
+        }
       }
-
+      if (!hasSomething) throw new BadRequestException(`Type ${metadata.type} is empty`);
       // run custom validation
       if (validationFn) validationFn(value);
     }
