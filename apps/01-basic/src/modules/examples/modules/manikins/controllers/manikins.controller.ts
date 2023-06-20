@@ -13,6 +13,7 @@ import {
 import { CreateManikinDto, ManikinDto, UpdateManikinDto } from '../dtos';
 import { Manikin, MANIKIN_PK } from '../schemas';
 import { ManikinsModelService, ManikinsService } from '../services';
+import { ManikinListDto } from '../dtos/manikin-list.dto';
 
 @ApiTags('Manikins')
 @Controller()
@@ -31,6 +32,12 @@ export class ManikinsController extends BaseController<
   @ApiPaginatedResponse(ManikinDto)
   async listAll(@Query() params: ListParamsDto) {
     return await super._listAllDocuments(params);
+  }
+
+  @Get('/populated')
+  @ApiPaginatedResponse(ManikinDto)
+  async listAllPopulated(@Query() params: ListParamsDto) {
+    return await super._listAllDocuments(params, { returnAs: ManikinListDto });
   }
 
   @Get('/:id')

@@ -8,7 +8,7 @@ import { plainToInstance } from 'class-transformer';
 export const manikinStub = (): Manikin => {
   return manikinMock({
     id: generateUUIDv4(),
-    dummy: generateUUIDv4(),
+    dummyId: generateUUIDv4(),
     dateExample: faker.date.anytime(),
     createdAt: faker.date.past(),
     updatedAt: faker.date.recent(),

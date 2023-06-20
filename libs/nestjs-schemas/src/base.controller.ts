@@ -43,7 +43,7 @@ export abstract class BaseController<
 
   protected async _listAllDocuments<V = TReturnDto>(
     params: ListParamsDto,
-    options?: ListAllDocumentsOpts<V>,
+    options?: Partial<ListAllDocumentsOpts<V>>,
   ) {
     return await this._service.listAllDocuments<V>({
       searchQuery: params.query,

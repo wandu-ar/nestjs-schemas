@@ -1,4 +1,4 @@
-import { Reflector } from '@nestjs/core';
+import { ModulesContainer, NestApplication, Reflector } from '@nestjs/core';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { Connection } from 'mongoose';
@@ -11,17 +11,19 @@ import {
   toPOJO,
 } from '@wandu-ar/nestjs-schemas';
 import { dummyStub, createDummyStub, updateDummyStub } from '../stubs';
-import { AppModule } from '../../../../app.module';
+import { AppModule } from '../../../../../../app.module';
 import { DummyDto } from '../../dtos';
 import { DUMMY_PK } from '../../schemas';
 import { plainToInstance } from 'class-transformer';
-import { DatabaseService } from '../../../../database';
+import { DatabaseService } from '../../../../../../database';
+import { MODULE_PATH } from '@nestjs/common/constants';
+import { DummiesModule } from '../../dummies.module';
 
 describe('DummiesController', () => {
   let dbConnection: Connection;
   let httpServer: any;
-  let app: any;
-  //const baseStub = dummyStub();
+  let app: NestApplication;
+  let basePath = '';
   const token = '';
 
   beforeAll(async () => {
@@ -38,6 +40,10 @@ describe('DummiesController', () => {
         excludePrefixes: ['_', '__'],
       }),
     );
+
+    // Get basepath of module
+    const modulesContainer = moduleRef.get(ModulesContainer);
+    basePath = Reflect.getMetadata(MODULE_PATH + modulesContainer.applicationId, DummiesModule);
 
     app.useGlobalPipes(
       new ValidationPipe({
@@ -76,7 +82,7 @@ describe('DummiesController', () => {
 
       // external check
       const response = await request(httpServer)
-        .post('/dummies')
+        .post(basePath)
         .send(entityPOJO)
         .set('Authorization', token);
       expect(response.status).toBe(201);
@@ -102,7 +108,7 @@ describe('DummiesController', () => {
       await dbConnection.collection('dummies').insertOne({ ...stub, deleted: false });
 
       // external check
-      const response = await request(httpServer).get('/dummies').set('Authorization', token);
+      const response = await request(httpServer).get(basePath).set('Authorization', token);
       expect(response.status).toBe(200);
       expect(response.body).toMatchObject<PaginatedResponseDto<DummyDto>>({
         filtered: 1,
@@ -127,7 +133,7 @@ describe('DummiesController', () => {
 
       // external check
       const response = await request(httpServer)
-        .get('/dummies/' + id)
+        .get(`${basePath}/${id}`)
         .set('Authorization', token);
       expect(response.status).toBe(200);
       expect(response.body).toMatchObject(toPOJO(stub));
@@ -149,7 +155,7 @@ describe('DummiesController', () => {
 
       // check
       const response = await request(httpServer)
-        .put('/dummies/' + id)
+        .put(`${basePath}/${id}`)
         .send(entityPOJO)
         .set('Authorization', token);
       expect(response.status).toBe(200);
@@ -170,7 +176,7 @@ describe('DummiesController', () => {
 
       // external check
       const response = await request(httpServer)
-        .delete('/dummies/' + id)
+        .delete(`${basePath}/${id}`)
         .set('Authorization', token);
       expect(response.status).toBe(204);
 

@@ -1,4 +1,4 @@
-import { Reflector } from '@nestjs/core';
+import { ModulesContainer, NestApplication, Reflector } from '@nestjs/core';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { Connection } from 'mongoose';
@@ -12,16 +12,18 @@ import {
   toPOJO,
 } from '@wandu-ar/nestjs-schemas';
 import { manikinStub, createManikinStub, updateManikinStub } from '../stubs';
-import { AppModule } from '../../../../app.module';
-import { CreateManikinDto, ManikinDto } from '../../dtos';
+import { AppModule } from '../../../../../../app.module';
+import { ManikinDto } from '../../dtos';
 import { MANIKIN_PK } from '../../schemas';
-import { DatabaseService } from '../../../../database';
+import { DatabaseService } from '../../../../../../database';
+import { MODULE_PATH } from '@nestjs/common/constants';
+import { ManikinsModule } from '../../manikins.module';
 
 describe('ManikinsController', () => {
   let dbConnection: Connection;
   let httpServer: any;
-  let app: any;
-  //const baseStub = manikinStub();
+  let app: NestApplication;
+  let basePath = '';
   const token = '';
 
   beforeAll(async () => {
@@ -29,7 +31,7 @@ describe('ManikinsController', () => {
       imports: [AppModule],
     }).compile();
 
-    app = moduleRef.createNestApplication();
+    app = moduleRef.createNestApplication<NestApplication>();
     useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
     // Global interceptors
@@ -38,6 +40,10 @@ describe('ManikinsController', () => {
         excludePrefixes: ['_', '__'],
       }),
     );
+
+    // Get basepath of module
+    const modulesContainer = moduleRef.get(ModulesContainer);
+    basePath = Reflect.getMetadata(MODULE_PATH + modulesContainer.applicationId, ManikinsModule);
 
     app.useGlobalPipes(
       new ValidationPipe({
@@ -76,7 +82,7 @@ describe('ManikinsController', () => {
 
       // external check
       const response = await request(httpServer)
-        .post('/manikins')
+        .post(basePath)
         .send(entityPOJO)
         .set('Authorization', token);
       expect(response.status).toBe(201);
@@ -102,7 +108,7 @@ describe('ManikinsController', () => {
       await dbConnection.collection('manikins').insertOne({ ...stub, deleted: false });
 
       // external check
-      const response = await request(httpServer).get('/manikins').set('Authorization', token);
+      const response = await request(httpServer).get(basePath).set('Authorization', token);
       expect(response.status).toBe(200);
       expect(response.body).toMatchObject<PaginatedResponseDto<ManikinDto>>({
         filtered: 1,
@@ -127,7 +133,7 @@ describe('ManikinsController', () => {
 
       // external check
       const response = await request(httpServer)
-        .get('/manikins/' + id)
+        .get(`${basePath}/${id}`)
         .set('Authorization', token);
       expect(response.status).toBe(200);
       expect(response.body).toMatchObject(toPOJO(stub));
@@ -149,7 +155,7 @@ describe('ManikinsController', () => {
 
       // check
       const response = await request(httpServer)
-        .put('/manikins/' + id)
+        .put(`${basePath}/${id}`)
         .send(entityPOJO)
         .set('Authorization', token);
       expect(response.status).toBe(200);
@@ -170,7 +176,7 @@ describe('ManikinsController', () => {
 
       // external check
       const response = await request(httpServer)
-        .delete('/manikins/' + id)
+        .delete(`${basePath}/${id}`)
         .set('Authorization', token);
       expect(response.status).toBe(204);
 

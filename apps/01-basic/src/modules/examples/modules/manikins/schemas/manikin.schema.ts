@@ -46,7 +46,7 @@ export class Manikin {
   objectIdExample!: ObjectId;
 
   @$PropUUIDv4({ ref: DUMMIES_COLLECTION, mustExists: true })
-  dummy!: UUIDv4;
+  dummyId!: UUIDv4;
 
   @$PropDate()
   createdAt!: Date;
