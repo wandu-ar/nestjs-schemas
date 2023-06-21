@@ -37,7 +37,7 @@ export class Dummy {
   numberExample!: number;
 
   @$PropBooleanOptional()
-  booleanExample!: boolean | null;
+  booleanExample: boolean | null = null;
 
   @$PropDate()
   dateExample!: Date;
