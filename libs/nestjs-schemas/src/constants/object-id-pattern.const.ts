@@ -1,1 +1,1 @@
-export const idPattern = '[A-F\\d]{24}';
+export const ObjectIdPattern = '[a-f\\d]{24}';
