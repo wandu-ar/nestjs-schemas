@@ -30,7 +30,7 @@ export function castToStringFn(value: any, options: CastToString = {}) {
   }
 
   // Apply type transformation
-  if (options.trim) {
+  if (options.trim ?? true) {
     newValue = newValue?.trim();
   }
 
