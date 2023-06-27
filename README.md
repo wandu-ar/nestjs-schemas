@@ -12,7 +12,9 @@ $ npm install @wandu/nestjs-schemas
 
 ## Stay in touch
 
-- Author - [Alejandro David Guevara](https://twitter.com/aledavidgueva)
+- Author - [Alejandro David Guevara](https://alejandroguevara.ar)
+- Website - [https://wandu.ar](https://wandu.ar/)
+- Twitter - [@aledavidgueva](https://twitter.com/aledavidgueva)
 
 ## License
 

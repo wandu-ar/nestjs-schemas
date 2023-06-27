@@ -5,7 +5,7 @@
   "main": "dist/libs/nestjs-schemas/index.js",
   "types": "dist/libs/nestjs-schemas/index.d.ts",
   "author": "Alejandro D. Guevara",
-  "license": "ISC",
+  "license": "MIT",
   "scripts": {
     "build": "rimraf dist && tsc --project libs/nestjs-schemas/tsconfig.lib.build.json",
     "build:basic": "nest build 01-basic",
