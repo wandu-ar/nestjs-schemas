@@ -16,8 +16,6 @@ import { T6sModule } from './t6s/t6s.module';
         ],
       },
     ]),
-    T5sModule,
-    T6sModule,
   ],
 })
 export class AppRoutingModule {}
