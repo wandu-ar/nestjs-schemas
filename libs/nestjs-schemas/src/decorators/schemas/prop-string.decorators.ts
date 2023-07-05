@@ -22,6 +22,7 @@ import {
   TransformToString,
   TransformToStringArray,
 } from '../../helpers';
+import { DocumentExistsOpts } from '../validators';
 
 type PropStringCommonOpts = PropCommonOpts & {
   minLenght?: number;
@@ -32,6 +33,8 @@ type PropStringCommonOpts = PropCommonOpts & {
   isUrl?: boolean | ValidatorJS.IsURLOptions;
   isEmail?: boolean | ValidatorJS.IsEmailOptions;
   isUUID?: boolean | UUIDVersion;
+  ref?: string | DocumentExistsOpts;
+  mustExists?: boolean;
 };
 
 export type PropStringOpts = Omit<PropStringCommonOpts, 'arrayMinSize' | 'arrayMaxSize'> & {

@@ -20,6 +20,7 @@ import {
   TransformToNumber,
   TransformToNumberArray,
 } from '../../helpers';
+import { DocumentExistsOpts } from '../validators';
 
 type PropNumberCommonOpts = PropCommonOpts & {
   min?: number;
@@ -27,6 +28,8 @@ type PropNumberCommonOpts = PropCommonOpts & {
   isInt?: boolean;
   isPositive?: boolean;
   unique?: boolean;
+  ref?: string | DocumentExistsOpts;
+  mustExists?: boolean;
 } & IsNumberOptions;
 
 export type PropNumberOpts = Omit<PropNumberCommonOpts, 'arrayMinSize' | 'arrayMaxSize'> & {
