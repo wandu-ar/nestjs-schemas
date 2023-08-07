@@ -184,7 +184,8 @@ export abstract class BaseService<
     options: ListAllDocumentsOpts<V>,
   ): Promise<PaginatedResponseDto<V>> {
     const returnAs = <ClassConstructor<V>>(<unknown>options?.returnAs ?? this._returnAs);
-    if (options?.sort) this.validateSort(options?.sort, returnAs);
+    // TODO: Reparar
+    // if (options?.sort) this.validateSort(options?.sort, returnAs);
     const filter: FilterQuery<any> = this.createFilter({ ...options, returnAs });
     const resp = new PaginatedResponseDto<V>();
 
@@ -236,7 +237,11 @@ export abstract class BaseService<
 
     // use find or aggregate?
     let result;
-    if (!this._hasSubSchemas(returnAs) && options?.useAggregate !== true) {
+    if (
+      !this._hasSubSchemas(returnAs) &&
+      options?.useAggregate !== true &&
+      !options?.pipelineMiddleware
+    ) {
       result = await this._model.findAll(filter ?? {}, {
         ...options,
         ...this._getDefaultOptions<V>(returnAs),

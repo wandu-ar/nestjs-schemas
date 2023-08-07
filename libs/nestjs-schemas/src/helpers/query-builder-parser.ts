@@ -205,7 +205,7 @@ export class QueryBuilderParser {
     // shape validation
     const requiredKeys = ['condition', 'rules'];
     const keys = Object.getOwnPropertyNames(obj);
-    if (keys.length !== requiredKeys.length) return false;
+    //if (keys.length !== requiredKeys.length) return false;
     for (const key of requiredKeys) {
       if (!keys.includes(key)) return false;
     }
