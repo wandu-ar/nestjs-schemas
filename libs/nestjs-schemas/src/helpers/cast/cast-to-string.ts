@@ -24,6 +24,9 @@ export function castToStringFn(value: any, options: CastToString = {}) {
   } else {
     if (typeof value['toString'] === 'function') {
       newValue = value.toString();
+      if (newValue === '[object Object]') {
+        newValue = JSON.stringify(value);
+      }
     } else {
       newValue = String(value);
     }

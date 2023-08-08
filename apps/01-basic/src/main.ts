@@ -3,12 +3,12 @@ import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
-import { AppModule } from './app.module';
 import {
   MetadataService,
   SchemaValidationPipe,
   defaultTransformOptions,
 } from '@wandu/nestjs-schemas';
+import { AppModule } from './app.module';
 import { Address, ContactInfo, Example, ExampleInList } from './schemas';
 
 async function bootstrap() {

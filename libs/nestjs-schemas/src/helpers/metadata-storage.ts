@@ -240,7 +240,7 @@ class MetadataStorageHostV1 {
       className = this._getName(type);
     }
 
-    if (className === 'undefined' || className === 'Array' || className === 'Object') {
+    if (className === 'undefined' || className === 'Array' /*|| className === 'Object'*/) {
       throw new Error(`Unrecognized type`);
     }
 

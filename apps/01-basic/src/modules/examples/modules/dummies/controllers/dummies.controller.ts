@@ -30,6 +30,7 @@ export class DummiesController extends BaseController<
   @Get('/')
   @ApiPaginatedResponse(DummyDto)
   async listAll(@Query() params: ListParamsDto) {
+    console.log(params);
     return await super._listAllDocuments(params);
   }
 

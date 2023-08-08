@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { ClassConstructor, ClassTransformOptions, plainToInstance } from 'class-transformer';
 import { FilterQuery, PipelineStage } from 'mongoose';
-import { RuleSet, SchemaDef } from './types';
+import { SchemaDef } from './types';
 import { defaultTransformOptions, METADATA } from './constants';
 import {
   BaseModel,
@@ -46,8 +46,8 @@ export type ListAllDocumentsOpts<T> = {
   limit: PipelineStage.Limit['$limit'];
   offset: PipelineStage.Skip['$skip'];
   searchQuery?: string;
-  filter?: RuleSet;
-  sort?: PipelineStage.Sort['$sort'];
+  filter?: object;
+  sort?: object;
   returnAs?: ClassConstructor<T>;
   transformOptions?: ClassTransformOptions;
 } & SoftDeleteOption &
@@ -183,7 +183,7 @@ export abstract class BaseService<
   ): Promise<PaginatedResponseDto<V>> {
     const returnAs = <ClassConstructor<V>>(<unknown>options?.returnAs ?? this._returnAs);
     // TODO: Reparar
-    // if (options?.sort) this.validateSort(options?.sort, returnAs);
+    if (options?.sort) this.validateSort(options?.sort, returnAs);
     const filter: FilterQuery<any> = this.createFilter({ ...options, returnAs });
     const resp = new PaginatedResponseDto<V>();
 

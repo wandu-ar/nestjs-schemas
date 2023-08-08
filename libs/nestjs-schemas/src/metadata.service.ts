@@ -9,6 +9,48 @@ export class MetadataService {
 
   constructor() {
     Logger.debug('MetadataService from SchemasModule has been loaded.');
+    this.check();
+  }
+
+  check(customSchemas: string[] = []) {
+    const validSchemas = [
+      'String',
+      'Boolean',
+      'Number',
+      'Date',
+      'Binary',
+      'ObjectId',
+      'Object',
+      ...customSchemas,
+    ];
+
+    const schemas = this._storage.getSchemas({
+      includeMiddleSchemas: false,
+    });
+
+    const invalidSchemas: Record<string, Record<string, string>> = {};
+
+    for (const schemaName of schemas.keys()) {
+      const projection = this._getProjection(schemaName, false, [], 'type');
+      for (const propKey in projection) {
+        if (!validSchemas.includes(projection[propKey])) {
+          if (invalidSchemas[schemaName] === undefined) {
+            invalidSchemas[schemaName] = {};
+          }
+          invalidSchemas[schemaName][propKey] = projection[propKey];
+        }
+      }
+    }
+
+    if (Object.keys(invalidSchemas).length)
+      throw new Error(`
+The following unknown types in schemas list has been detected.
+The projection of the schemas may be fail.
+Please, consider patch schemas adding @$Schema decorator por ensure schema scan.
+---
+Schemas:
+${JSON.stringify(invalidSchemas, null, 2)}
+`);
   }
 
   getProjection(schema: Function | string) {

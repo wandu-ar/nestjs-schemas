@@ -5,6 +5,7 @@ export * from './prop-enum.decorators';
 export * from './prop-instance.decorators';
 export * from './prop-number.decorators';
 export * from './prop-object-id.decorators';
+export * from './prop-pojo.decorators';
 export * from './prop-string.decorators';
 export * from './prop-sub-schema.decorators';
 export * from './prop-uuid-v4.decorators';

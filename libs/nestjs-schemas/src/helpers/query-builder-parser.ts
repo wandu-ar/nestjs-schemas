@@ -84,10 +84,7 @@ export class QueryBuilderParser {
 
   private filter: FilterQuery<any>;
 
-  constructor(
-    private readonly ruleSet: RuleSet,
-    private readonly mapTypes: { [key: string]: string },
-  ) {
+  constructor(private readonly ruleSet: any, private readonly mapTypes: { [key: string]: string }) {
     try {
       this.filter = this.parseRuleSet(this.ruleSet);
     } catch (err) {

@@ -1,5 +1,5 @@
 import { $Schema, $PropStringOptional, $PropInstanceArrayOptional } from '@wandu/nestjs-schemas';
-import { Address } from './address.schema';
+import { StreetOfAddress } from './street-of-address';
 
 @$Schema()
 export class ContactInfo {
@@ -12,6 +12,6 @@ export class ContactInfo {
   @$PropStringOptional()
   legacyAddress: string | null = null;
 
-  @$PropInstanceArrayOptional(Address)
-  addresses: Address[] | null = null;
+  @$PropInstanceArrayOptional(StreetOfAddress)
+  addresses: StreetOfAddress[] | null = null;
 }
