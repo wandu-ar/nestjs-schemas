@@ -534,16 +534,20 @@ export function $IntersectionType<
 >;
 export function $IntersectionType(...classRefs: Type[]) {
   let classARef: Type | null = null;
-  let resultClass: Type | null = null;
+  let IntersectionTypeClass: Type | null = null;
   for (const classBRef of classRefs) {
     if (classARef === null) {
       classARef = classBRef;
     } else {
-      resultClass = NestJSSwaggerIntersectionType(classARef, classBRef);
-      _MetadataStorageV1.copyProps(classARef, resultClass);
-      _MetadataStorageV1.copyProps(classBRef, resultClass);
-      classARef = resultClass;
+      IntersectionTypeClass = NestJSSwaggerIntersectionType(classARef, classBRef);
+      // scope class
+      Object.defineProperty(IntersectionTypeClass, 'name', {
+        value: `IntersectionType_${classARef.name}_${classBRef.name}`,
+      });
+      _MetadataStorageV1.copyProps(classARef, IntersectionTypeClass);
+      _MetadataStorageV1.copyProps(classBRef, IntersectionTypeClass);
+      classARef = IntersectionTypeClass;
     }
   }
-  return resultClass;
+  return IntersectionTypeClass;
 }
