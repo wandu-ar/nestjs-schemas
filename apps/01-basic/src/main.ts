@@ -9,6 +9,7 @@ import {
   SchemaValidationPipe,
   defaultTransformOptions,
 } from '@wandu/nestjs-schemas';
+import { Address, ContactInfo, Example } from './schemas';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: true });
@@ -40,7 +41,9 @@ async function bootstrap() {
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   const config = new DocumentBuilder().setTitle('NestJS Schemas - Basic example').build();
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, config, {
+    extraModels: [Example, ContactInfo, Address],
+  });
   SwaggerModule.setup('docs', app, document);
 
   await app.listen(3000);

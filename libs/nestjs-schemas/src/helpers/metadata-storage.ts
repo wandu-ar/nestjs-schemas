@@ -211,15 +211,16 @@ class MetadataStorageHostV1 {
 
     let type: any = 'undefined';
     const mongoType: any = (<any>(<unknown>options.mongoose))?.type;
-    if (mongoType) {
-      type = mongoType;
-    } else if (options.swagger?.type) {
-      type = options.swagger.type;
-    } else if (options.transformer?.type) {
+
+    if (options.transformer?.type) {
       const factory = !Array.isArray(options.transformer.type)
         ? options.transformer.type
         : options.transformer.type[0];
       type = factory();
+    } else if (options.swagger?.type) {
+      type = options.swagger.type;
+    } else if (mongoType) {
+      type = mongoType;
     } else {
       type = reflectedType;
     }

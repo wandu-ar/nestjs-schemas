@@ -5,9 +5,55 @@ import { _MetadataStorageV1 } from './helpers/metadata-storage';
 @Injectable()
 export class MetadataService {
   private readonly _storage = _MetadataStorageV1;
+  private _cacheProjections: Map<string, any> = new Map();
 
   constructor() {
     Logger.debug('MetadataService from SchemasModule has been loaded.');
+  }
+
+  getProjection(schema: Function | string) {
+    return this._getProjection(schema);
+  }
+
+  getFullProjection(schema: Function | string) {
+    return this._getProjection(schema, false);
+  }
+
+  _getProjection(
+    schema: Function | string,
+    onlyTopLevel = true,
+    parents: string[] = [],
+    value: 1 | 'type' = 1,
+  ) {
+    let schemaKey = typeof schema === 'string' ? schema : schema.name;
+    schemaKey += onlyTopLevel ? '_top_' + value : '_full_' + value;
+    if (!this._cacheProjections.has(schemaKey)) {
+      let projection: { [field: string]: any } = {};
+      const schemaMetadata = this.getSchema(schema);
+      if (schemaMetadata !== undefined) {
+        for (const [property, propDef] of schemaMetadata.props.entries()) {
+          if (propDef.options.transformer?.expose || !propDef.options.transformer?.exclude) {
+            // La propiedad puede ser projectada?
+            const subschemaProjection = this._getProjection(
+              propDef.type.type,
+              onlyTopLevel,
+              [...parents, property],
+              value,
+            );
+            // si solo se requiere primer nivel o no se puede proyectar
+            if (onlyTopLevel || !Object.keys(subschemaProjection).length) {
+              const key = [...parents, property].join('.');
+              projection[key] = value === 1 ? 1 : propDef.type.type;
+            } else {
+              projection = { ...projection, ...subschemaProjection };
+            }
+          }
+        }
+        this._cacheProjections.set(schemaKey, projection);
+      }
+    }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return this._cacheProjections.get(schemaKey)!;
   }
 
   /**

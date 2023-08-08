@@ -5,8 +5,10 @@ import { AppService } from './app.service';
 import { DatabaseModule } from './database';
 import { ExamplesModule } from './modules';
 import { AppRoutingModule } from './app-routing.module';
+import { AppController } from './app.controller';
 
 @Module({
+  controllers: [AppController],
   imports: [
     MongooseModule.forRootAsync({
       useFactory: () => ({

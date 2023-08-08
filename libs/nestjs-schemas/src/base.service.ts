@@ -75,8 +75,6 @@ export abstract class BaseService<
 > {
   defaultTransformOptions: ClassTransformOptions = defaultTransformOptions;
 
-  protected _cacheProjections: Map<string, any> = new Map();
-
   protected _cachePipelines: Map<string, PipelineStage[]> = new Map();
 
   constructor(
@@ -111,7 +109,7 @@ export abstract class BaseService<
   }
 
   validateSort(sort: any, schema: Function | string) {
-    this._validateSort(sort, this._getFullProjection(schema));
+    this._validateSort(sort, this._metadata.getFullProjection(schema));
   }
 
   protected _validateSort(input: any, projection: any) {
@@ -133,7 +131,7 @@ export abstract class BaseService<
     const $and: FilterQuery<any>[] = [];
     const query = options.searchQuery ?? '';
     const hasFilter = options.filter && Object.getOwnPropertyNames(options.filter).length;
-    const projection = this.__getProjection(options.returnAs, false, [], 'type');
+    const projection = this._metadata._getProjection(options.returnAs, false, [], 'type');
 
     // Create filter by query builder
     if (hasFilter) {
@@ -508,7 +506,7 @@ export abstract class BaseService<
       // Sort
       if (options?.sort !== undefined) pipeline.push({ $sort: options.sort });
       // Projection
-      pipeline.push({ $project: this._getProjection(schema) });
+      pipeline.push({ $project: this._metadata.getProjection(schema) });
       // Skip
       if (options?.skip !== undefined) pipeline.push({ $skip: options.skip });
       // Limit
@@ -519,50 +517,6 @@ export abstract class BaseService<
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     //return this._cachePipelines.get(schemaName)!;
     return pipeline;
-  }
-
-  protected _getProjection(schema: Function | string) {
-    return this.__getProjection(schema);
-  }
-
-  protected _getFullProjection(schema: Function | string) {
-    return this.__getProjection(schema, false);
-  }
-
-  protected __getProjection(
-    schema: Function | string,
-    onlyTopLevel = true,
-    parents: string[] = [],
-    value: 1 | 'type' = 1,
-  ) {
-    let schemaKey = typeof schema === 'string' ? schema : schema.name;
-    schemaKey += onlyTopLevel ? '_top_' + value : '_full_' + value;
-    if (!this._cacheProjections.has(schemaKey)) {
-      let projection: { [field: string]: any } = {};
-      const schemaMetadata = this._metadata.getSchema(schema);
-      if (schemaMetadata !== undefined) {
-        for (const [property, propDef] of schemaMetadata.props.entries()) {
-          if (propDef.options.transformer?.expose || !propDef.options.transformer?.exclude) {
-            const lookup = propDef.metadata.get(METADATA.MONGOOSE_LOOKUP) as LookupOpts;
-            if (onlyTopLevel || lookup === undefined) {
-              const key = [...parents, property].join('.');
-              projection[key] = value === 1 ? 1 : propDef.type.type;
-            } else {
-              const subschemaProjection = this.__getProjection(
-                propDef.type.type,
-                onlyTopLevel,
-                [...parents, property],
-                value,
-              );
-              projection = { ...projection, ...subschemaProjection };
-            }
-          }
-        }
-        this._cacheProjections.set(schemaKey, projection);
-      }
-    }
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return this._cacheProjections.get(schemaKey)!;
   }
 
   protected _getLookupsAndUnwind(
@@ -623,7 +577,7 @@ export abstract class BaseService<
   protected _getDefaultOptions<V>(returnAs: ClassConstructor<V>) {
     return {
       toObject: true,
-      projection: this._getProjection(returnAs),
+      projection: this._metadata.getProjection(returnAs),
     };
   }
 

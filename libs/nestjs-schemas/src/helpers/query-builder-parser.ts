@@ -2,7 +2,8 @@ import { Rule, RuleSet } from '../types';
 import { FilterQuery } from 'mongoose';
 import { BadRequestException, InternalServerErrorException, Logger } from '@nestjs/common';
 import * as dayjs from 'dayjs';
-import { ObjectId } from './mongodb';
+import { ObjectId, toUUIDv4 } from './mongodb';
+import { isUUID } from 'class-validator';
 
 export class QueryBuilderParser {
   private readonly conditions = {
@@ -12,12 +13,13 @@ export class QueryBuilderParser {
 
   private readonly constraints: {
     [operation: string]: {
-      field: ('String' | 'ObjectId' | 'Date' | 'Number' | 'Boolean' | string)[];
+      field: ('String' | 'UUIDv4' | 'ObjectId' | 'Date' | 'Number' | 'Boolean' | string)[];
       validation: (value: any) => boolean;
     }[];
   } = {
     equal: [
       { field: ['String'], validation: (value: any) => this.isString(value) },
+      { field: ['UUIDv4'], validation: (value: any) => this.isUUIDv4(value) },
       { field: ['ObjectId'], validation: (value: any) => this.isObjectId(value) },
       { field: ['Date'], validation: (value: any) => this.isDate(value) },
       { field: ['Number'], validation: (value: any) => this.isNumber(value) },
@@ -25,6 +27,7 @@ export class QueryBuilderParser {
     ],
     notEqual: [
       { field: ['String'], validation: (value: any) => this.isString(value) },
+      { field: ['UUIDv4'], validation: (value: any) => this.isUUIDv4(value) },
       { field: ['ObjectId'], validation: (value: any) => this.isObjectId(value) },
       { field: ['Date'], validation: (value: any) => this.isDate(value) },
       { field: ['Number'], validation: (value: any) => this.isNumber(value) },
@@ -51,6 +54,7 @@ export class QueryBuilderParser {
     ],
     in: [
       { field: ['String'], validation: (value: any) => this.isArrayOf(value, this.isString) },
+      { field: ['UUIDv4'], validation: (value: any) => this.isArrayOf(value, this.isUUIDv4) },
       { field: ['ObjectId'], validation: (value: any) => this.isArrayOf(value, this.isObjectId) },
       { field: ['Date'], validation: (value: any) => this.isArrayOf(value, this.isDate) },
       { field: ['Number'], validation: (value: any) => this.isArrayOf(value, this.isNumber) },
@@ -58,6 +62,7 @@ export class QueryBuilderParser {
     ],
     notIn: [
       { field: ['String'], validation: (value: any) => this.isArrayOf(value, this.isString) },
+      { field: ['UUIDv4'], validation: (value: any) => this.isArrayOf(value, this.isUUIDv4) },
       { field: ['ObjectId'], validation: (value: any) => this.isArrayOf(value, this.isObjectId) },
       { field: ['Date'], validation: (value: any) => this.isArrayOf(value, this.isDate) },
       { field: ['Number'], validation: (value: any) => this.isArrayOf(value, this.isNumber) },
@@ -65,14 +70,14 @@ export class QueryBuilderParser {
     ],
     isNull: [
       {
-        field: ['String', 'ObjectId', 'Date', 'Number', 'Boolean'],
+        field: ['String', 'UUIDv4', 'ObjectId', 'Date', 'Number', 'Boolean'],
         validation: (value: any) => this.isNull(value),
       },
     ],
     isNotNull: [
       {
-        field: ['String', 'ObjectId', 'Date', 'Number', 'Boolean'],
-        validation: (value: any) => this.isNull(value),
+        field: ['String', 'UUIDv4', 'ObjectId', 'Date', 'Number', 'Boolean'],
+        validation: (value: any) => !this.isNull(value),
       },
     ],
   };
@@ -133,6 +138,11 @@ export class QueryBuilderParser {
           value = !Array.isArray(rule.value)
             ? (<string>(<unknown>rule.value)).trim()
             : (<string[]>(<unknown>rule.value)).map((val: string) => val.trim());
+          break;
+        case 'UUIDv4':
+          value = !Array.isArray(rule.value)
+            ? toUUIDv4(<string>(<unknown>rule.value))
+            : (<string[]>(<unknown>rule.value)).map((val: string) => toUUIDv4(val));
           break;
         case 'ObjectId':
           value = !Array.isArray(rule.value)
@@ -274,6 +284,10 @@ export class QueryBuilderParser {
 
   private isDate(value: any) {
     return typeof value === 'string' && Number.isFinite(Date.parse(value));
+  }
+
+  private isUUIDv4(value: any) {
+    return typeof value === 'string' && isUUID(value, '4');
   }
 
   private isObjectId(value: any) {
