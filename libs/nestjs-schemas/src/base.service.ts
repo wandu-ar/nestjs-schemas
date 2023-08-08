@@ -182,7 +182,6 @@ export abstract class BaseService<
     options: ListAllDocumentsOpts<V>,
   ): Promise<PaginatedResponseDto<V>> {
     const returnAs = <ClassConstructor<V>>(<unknown>options?.returnAs ?? this._returnAs);
-    // TODO: Reparar
     if (options?.sort) this.validateSort(options?.sort, returnAs);
     const filter: FilterQuery<any> = this.createFilter({ ...options, returnAs });
     const resp = new PaginatedResponseDto<V>();
