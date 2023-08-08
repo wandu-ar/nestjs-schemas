@@ -41,7 +41,11 @@ export class MetadataService {
               value,
             );
             // si solo se requiere primer nivel o no se puede proyectar
-            if (onlyTopLevel || !Object.keys(subschemaProjection).length) {
+            if (
+              onlyTopLevel ||
+              !subschemaProjection ||
+              (typeof subschemaProjection === 'object' && !Object.keys(subschemaProjection).length)
+            ) {
               const key = [...parents, property].join('.');
               projection[key] = value === 1 ? 1 : propDef.type.type;
             } else {
