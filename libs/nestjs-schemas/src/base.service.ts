@@ -94,10 +94,9 @@ export abstract class BaseService<
     let newString = String(query);
     try {
       // limpieza
-      newString = newString
-        .trim()
-        .replace(/°/g, 'º')
-        .replace(/[^\w\s+\-.,;:°ºª_"\/@<>=]/giu, '');
+      newString = newString.trim().replace(/°/g, 'º');
+      // TODO: Mejorar. Dado que tmb evita tíldes...
+      //.replace(/[^\w\s+\-.,;:°ºª_"\/@<>=]/giu, '');
       if (!newString || typeof newString !== 'string') newString = '';
       // quitar espacios en blanco duplicados
       newString = newString.replace(/\s{2,}/g, ' ');
