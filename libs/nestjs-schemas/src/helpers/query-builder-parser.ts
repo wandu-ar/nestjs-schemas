@@ -13,13 +13,13 @@ export class QueryBuilderParser {
 
   private readonly constraints: {
     [operation: string]: {
-      field: ('String' | 'UUIDv4' | 'ObjectId' | 'Date' | 'Number' | 'Boolean' | string)[];
+      field: ('String' | 'Binary' | 'ObjectId' | 'Date' | 'Number' | 'Boolean' | string)[];
       validation: (value: any) => boolean;
     }[];
   } = {
     equal: [
       { field: ['String'], validation: (value: any) => this.isString(value) },
-      { field: ['UUIDv4'], validation: (value: any) => this.isUUIDv4(value) },
+      { field: ['Binary'], validation: (value: any) => this.isBinary(value) },
       { field: ['ObjectId'], validation: (value: any) => this.isObjectId(value) },
       { field: ['Date'], validation: (value: any) => this.isDate(value) },
       { field: ['Number'], validation: (value: any) => this.isNumber(value) },
@@ -27,7 +27,7 @@ export class QueryBuilderParser {
     ],
     notEqual: [
       { field: ['String'], validation: (value: any) => this.isString(value) },
-      { field: ['UUIDv4'], validation: (value: any) => this.isUUIDv4(value) },
+      { field: ['Binary'], validation: (value: any) => this.isBinary(value) },
       { field: ['ObjectId'], validation: (value: any) => this.isObjectId(value) },
       { field: ['Date'], validation: (value: any) => this.isDate(value) },
       { field: ['Number'], validation: (value: any) => this.isNumber(value) },
@@ -54,7 +54,7 @@ export class QueryBuilderParser {
     ],
     in: [
       { field: ['String'], validation: (value: any) => this.isArrayOf(value, this.isString) },
-      { field: ['UUIDv4'], validation: (value: any) => this.isArrayOf(value, this.isUUIDv4) },
+      { field: ['Binary'], validation: (value: any) => this.isArrayOf(value, this.isBinary) },
       { field: ['ObjectId'], validation: (value: any) => this.isArrayOf(value, this.isObjectId) },
       { field: ['Date'], validation: (value: any) => this.isArrayOf(value, this.isDate) },
       { field: ['Number'], validation: (value: any) => this.isArrayOf(value, this.isNumber) },
@@ -62,7 +62,7 @@ export class QueryBuilderParser {
     ],
     notIn: [
       { field: ['String'], validation: (value: any) => this.isArrayOf(value, this.isString) },
-      { field: ['UUIDv4'], validation: (value: any) => this.isArrayOf(value, this.isUUIDv4) },
+      { field: ['Binary'], validation: (value: any) => this.isArrayOf(value, this.isBinary) },
       { field: ['ObjectId'], validation: (value: any) => this.isArrayOf(value, this.isObjectId) },
       { field: ['Date'], validation: (value: any) => this.isArrayOf(value, this.isDate) },
       { field: ['Number'], validation: (value: any) => this.isArrayOf(value, this.isNumber) },
@@ -70,13 +70,13 @@ export class QueryBuilderParser {
     ],
     isNull: [
       {
-        field: ['String', 'UUIDv4', 'ObjectId', 'Date', 'Number', 'Boolean'],
+        field: ['String', 'Binary', 'ObjectId', 'Date', 'Number', 'Boolean'],
         validation: (value: any) => this.isNull(value),
       },
     ],
     isNotNull: [
       {
-        field: ['String', 'UUIDv4', 'ObjectId', 'Date', 'Number', 'Boolean'],
+        field: ['String', 'Binary', 'ObjectId', 'Date', 'Number', 'Boolean'],
         validation: (value: any) => !this.isNull(value),
       },
     ],
@@ -136,10 +136,10 @@ export class QueryBuilderParser {
             ? (<string>(<unknown>rule.value)).trim()
             : (<string[]>(<unknown>rule.value)).map((val: string) => val.trim());
           break;
-        case 'UUIDv4':
+        case 'Binary':
           value = !Array.isArray(rule.value)
-            ? toUUIDv4(<string>(<unknown>rule.value))
-            : (<string[]>(<unknown>rule.value)).map((val: string) => toUUIDv4(val));
+            ? this.toBinary(<string>(<unknown>rule.value))
+            : (<string[]>(<unknown>rule.value)).map((val: string) => this.toBinary(val));
           break;
         case 'ObjectId':
           value = !Array.isArray(rule.value)
@@ -283,6 +283,10 @@ export class QueryBuilderParser {
     return typeof value === 'string' && Number.isFinite(Date.parse(value));
   }
 
+  private isBinary(value: any) {
+    return this.isUUIDv4(value); // TODO: add more bson binary formats
+  }
+
   private isUUIDv4(value: any) {
     return typeof value === 'string' && isUUID(value, '4');
   }
@@ -299,5 +303,12 @@ export class QueryBuilderParser {
       }
     }
     return true;
+  }
+
+  private toBinary(value: any) {
+    if (this.isUUIDv4(value)) {
+      return toUUIDv4(value);
+    }
+    throw new Error('Unknown binary format');
   }
 }
