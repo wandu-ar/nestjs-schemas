@@ -14,8 +14,6 @@ import {
   CastToPojoOptions,
   TransformToPojo,
   TransformToPojoArray,
-  TransformToString,
-  TransformToStringArray,
 } from '../../helpers';
 
 type PropPojoCommonOpts = PropCommonOpts /*& {}*/;
@@ -145,7 +143,7 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
       { toClassOnly: true },
     ]);
     // To plain only
-    prop.transformer?.transform?.push([TransformToString(), { toPlainOnly: true }]);
+    prop.transformer?.transform?.push([TransformToPojo(), { toPlainOnly: true }]);
   } else {
     // To class only
     prop.transformer?.transform?.push([
@@ -156,7 +154,7 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
       { toClassOnly: true },
     ]);
     // To plain only
-    prop.transformer?.transform?.push([TransformToStringArray(), { toPlainOnly: true }]);
+    prop.transformer?.transform?.push([TransformToPojoArray(), { toPlainOnly: true }]);
   }
 
   // User custom transform chain fn
