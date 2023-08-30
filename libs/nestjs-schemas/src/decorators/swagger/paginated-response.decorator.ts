@@ -7,6 +7,7 @@ export const ApiPaginatedResponse = <DataDto extends Type<unknown>>(dataDto: Dat
     ApiExtraModels(PaginatedResponseDto, dataDto),
     ApiOkResponse({
       schema: {
+        title: `PaginatedResponseOf${dataDto.name}`,
         allOf: [
           { $ref: getSchemaPath(PaginatedResponseDto) },
           {

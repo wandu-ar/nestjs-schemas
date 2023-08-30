@@ -193,7 +193,7 @@ export abstract class BaseService<
 
     const { filterMiddleware, pipelineMiddleware /*, ...others*/ } = options;
 
-    resp.filtered = await this.countComplexDocuments({
+    resp.total = await this.countComplexDocuments({
       filter,
       filterMiddleware,
       pipelineMiddleware,
@@ -201,7 +201,7 @@ export abstract class BaseService<
       softDelete: options.softDelete,
     });
 
-    resp.total = resp.filtered;
+    resp.filtered = resp.total;
 
     const data = await this.findAllDocuments({
       ...options,
