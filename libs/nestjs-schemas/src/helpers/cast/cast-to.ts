@@ -38,7 +38,9 @@ export function castTo<T, CastFnOptions = undefined>(
       } else {
         newValue = [];
         for (const element of value) {
-          newValue.push(castFn(element, castFnOptions));
+          if (element !== null && element !== undefined) {
+            newValue.push(castFn(element, castFnOptions));
+          }
         }
       }
     } catch (err) {
