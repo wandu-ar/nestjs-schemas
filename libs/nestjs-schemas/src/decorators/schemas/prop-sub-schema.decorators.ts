@@ -176,7 +176,7 @@ function setProp<T>(
 
   // User custom transform chain fn
   if (opts.transform !== undefined) {
-    prop.transformer.transform = [...opts.transform];
+    prop.transformer.transform = [...(prop.transformer.transform ?? []), ...opts.transform];
   }
 
   // Validations

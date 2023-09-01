@@ -163,7 +163,7 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
 
   // User custom transform chain fn
   if (opts.transform !== undefined) {
-    prop.transformer.transform = [...opts.transform];
+    prop.transformer.transform = [...(prop.transformer.transform ?? []), ...opts.transform];
   }
 
   // Validations
