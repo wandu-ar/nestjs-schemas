@@ -10,7 +10,12 @@ import {
   MinDate,
 } from 'class-validator';
 import { $Prop } from './prop.decorator';
-import { CommonPropOpts, Nullable, PropCommonOpts, PropertyOptions } from '../../types';
+import {
+  CommonPropOpts,
+  Nullable,
+  PropCommonOpts,
+  PropertyOptions,
+} from '../../types';
 import {
   CastToDateArrayOptions,
   CastToDateOptions,
@@ -24,7 +29,10 @@ type PropDateCommonOpts = PropCommonOpts & {
   unique?: boolean;
 };
 
-export type PropDateOpts = Omit<PropDateCommonOpts, 'arrayMinSize' | 'arrayMaxSize'> & {
+export type PropDateOpts = Omit<
+  PropDateCommonOpts,
+  'arrayMinSize' | 'arrayMaxSize'
+> & {
   arrayMinSize?: undefined;
   arrayMaxSize?: undefined;
 } & CastToDateOptions;
@@ -56,7 +64,9 @@ export function $PropDate(opts: PropDateOpts = {}): PropertyDecorator {
   };
 }
 
-export function $PropDateArray(opts: PropDateArrayOpts = {}): PropertyDecorator {
+export function $PropDateArray(
+  opts: PropDateArrayOpts = {},
+): PropertyDecorator {
   return (target: any, property: any) => {
     setProp(
       {
@@ -71,7 +81,9 @@ export function $PropDateArray(opts: PropDateArrayOpts = {}): PropertyDecorator 
   };
 }
 
-export function $PropDateOptional(opts: PropDateOptionalOpts = {}): PropertyDecorator {
+export function $PropDateOptional(
+  opts: PropDateOptionalOpts = {},
+): PropertyDecorator {
   return (target: any, property: any) => {
     setProp(
       {
@@ -85,7 +97,9 @@ export function $PropDateOptional(opts: PropDateOptionalOpts = {}): PropertyDeco
   };
 }
 
-export function $PropDateArrayOptional(opts: PropDateArrayOptionalOpts = {}): PropertyDecorator {
+export function $PropDateArrayOptional(
+  opts: PropDateArrayOptionalOpts = {},
+): PropertyDecorator {
   return (target: any, property: any) => {
     setProp(
       {
@@ -99,7 +113,11 @@ export function $PropDateArrayOptional(opts: PropDateArrayOptionalOpts = {}): Pr
   };
 }
 
-function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: any) {
+function setProp(
+  opts: CommonPropOpts & SetPropOptions,
+  target: any,
+  property: any,
+) {
   // Init final opts
   if (opts.isOptional && opts.default === undefined) {
     opts.default = null;
@@ -122,7 +140,8 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
     },
     transformer: {
       expose: opts.exclude === true || opts.private === true ? false : true,
-      exclude: opts.exclude === true || opts.private === true ? true : undefined,
+      exclude:
+        opts.exclude === true || opts.private === true ? true : undefined,
       type: () => Date,
       transform: [],
     },
@@ -138,20 +157,21 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
   };
 
   if (!opts.isArray) {
-    prop.transformer?.transform?.push([
+    prop.transformer.transform?.push([
       TransformToDate(transformToTypeOpts),
       { toClassOnly: true },
     ]);
   } else {
-    prop.transformer?.transform?.push([
+    prop.transformer.transform?.push([
       TransformToDateArray(transformToTypeOpts),
       { toClassOnly: true },
     ]);
   }
 
   // User custom transform chain fn
+  // Transform is not chainable
   if (opts.transform !== undefined) {
-    prop.transformer.transform = [...(prop.transformer.transform ?? []), ...opts.transform];
+    prop.transformer.transform = opts.transform;
   }
 
   // Validations
@@ -168,8 +188,10 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
     prop.validators.push(IsArray());
     opts.arrayMinSize = opts.arrayMinSize ?? 0;
     opts.arrayMaxSize = opts.arrayMaxSize ?? 0;
-    if (opts.arrayMinSize > 0) prop.validators.push(ArrayMinSize(opts.arrayMinSize));
-    if (opts.arrayMaxSize > 0) prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
+    if (opts.arrayMinSize > 0)
+      prop.validators.push(ArrayMinSize(opts.arrayMinSize));
+    if (opts.arrayMaxSize > 0)
+      prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
   }
 
   prop.validators.push(IsDate({ each: opts.isArray }));

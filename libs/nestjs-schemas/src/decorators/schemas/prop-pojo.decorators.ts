@@ -135,7 +135,7 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
 
   if (!opts.isArray) {
     // To class only
-    prop.transformer?.transform?.push([
+    prop.transformer.transform?.push([
       TransformToPojo({
         ...transformToTypeOpts,
         default: <any>(<unknown>opts.default),
@@ -143,10 +143,10 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
       { toClassOnly: true },
     ]);
     // To plain only
-    prop.transformer?.transform?.push([TransformToPojo(), { toPlainOnly: true }]);
+    prop.transformer.transform?.push([TransformToPojo(), { toPlainOnly: true }]);
   } else {
     // To class only
-    prop.transformer?.transform?.push([
+    prop.transformer.transform?.push([
       TransformToPojoArray({
         ...transformToTypeOpts,
         default: <any>(<unknown>opts.default),
@@ -154,12 +154,13 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
       { toClassOnly: true },
     ]);
     // To plain only
-    prop.transformer?.transform?.push([TransformToPojoArray(), { toPlainOnly: true }]);
+    prop.transformer.transform?.push([TransformToPojoArray(), { toPlainOnly: true }]);
   }
 
   // User custom transform chain fn
+  // Transform is not chainable
   if (opts.transform !== undefined) {
-    prop.transformer.transform = [...(prop.transformer.transform ?? []), ...opts.transform];
+    prop.transformer.transform = opts.transform;
   }
 
   // Validations

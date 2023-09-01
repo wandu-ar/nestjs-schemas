@@ -139,7 +139,7 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
       { toClassOnly: true },
     ]);
   } else {
-    prop.transformer?.transform?.push([
+    prop.transformer.transform?.push([
       TransformToBooleanArray({
         ...transformToTypeOpts,
         default: <any>(<unknown>opts.default),
@@ -149,8 +149,9 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
   }
 
   // User custom transform chain fn
+  // Transform is not chainable
   if (opts.transform !== undefined) {
-    prop.transformer.transform = [...(prop.transformer.transform ?? []), ...opts.transform];
+    prop.transformer.transform = opts.transform;
   }
 
   // Validations

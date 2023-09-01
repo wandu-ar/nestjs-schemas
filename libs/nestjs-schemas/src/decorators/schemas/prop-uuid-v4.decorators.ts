@@ -148,7 +148,7 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
 
   if (!opts.isArray) {
     // To class only
-    prop.transformer?.transform?.push([
+    prop.transformer.transform?.push([
       TransformToUUIDv4({
         ...transformToTypeOpts,
         default: <any>(<unknown>opts.default),
@@ -156,10 +156,10 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
       { toClassOnly: true },
     ]);
     // To plain only
-    prop.transformer?.transform?.push([TransformToString(), { toPlainOnly: true }]);
+    prop.transformer.transform?.push([TransformToString(), { toPlainOnly: true }]);
   } else {
     // To class only
-    prop.transformer?.transform?.push([
+    prop.transformer.transform?.push([
       TransformToUUIDv4Array({
         ...transformToTypeOpts,
         default: <any>(<unknown>opts.default),
@@ -167,12 +167,13 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
       { toClassOnly: true },
     ]);
     // To plain only
-    prop.transformer?.transform?.push([TransformToStringArray(), { toPlainOnly: true }]);
+    prop.transformer.transform?.push([TransformToStringArray(), { toPlainOnly: true }]);
   }
 
   // User custom transform chain fn
+  // Transform is not chainable
   if (opts.transform !== undefined) {
-    prop.transformer.transform = [...(prop.transformer.transform ?? []), ...opts.transform];
+    prop.transformer.transform = opts.transform;
   }
 
   // Validations

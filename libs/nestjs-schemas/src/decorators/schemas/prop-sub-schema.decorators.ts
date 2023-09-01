@@ -175,8 +175,9 @@ function setProp<T>(
   );
 
   // User custom transform chain fn
+  // Transform is not chainable
   if (opts.transform !== undefined) {
-    prop.transformer.transform = [...(prop.transformer.transform ?? []), ...opts.transform];
+    prop.transformer.transform = opts.transform;
   }
 
   // Validations

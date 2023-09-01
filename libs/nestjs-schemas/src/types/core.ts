@@ -59,6 +59,9 @@ export type PropertyOptions = {
   transformer?: {
     expose?: boolean | ExposeOptions;
     exclude?: boolean | ExcludeOptions;
+    /**
+     * This option replace default transform functions
+     */
     transform?: (
       | [(params: TransformFnParams) => any, TransformOptions]
       | ((params: TransformFnParams) => any)

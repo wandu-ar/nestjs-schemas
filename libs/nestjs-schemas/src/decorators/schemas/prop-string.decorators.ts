@@ -158,20 +158,18 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
   };
 
   if (!opts.isArray) {
-    prop.transformer?.transform?.push([
-      TransformToString(transformToTypeOpts),
-      { toClassOnly: true },
-    ]);
+    prop.transformer.transform?.push([TransformToString(transformToTypeOpts), { toClassOnly: true }];
   } else {
-    prop.transformer?.transform?.push([
+    prop.transformer.transform?.push([
       TransformToStringArray(transformToTypeOpts),
       { toClassOnly: true },
     ]);
   }
 
   // User custom transform chain fn
+// Transform is not chainable
   if (opts.transform !== undefined) {
-    prop.transformer.transform = [...(prop.transformer.transform ?? []), ...opts.transform];
+    prop.transformer.transform = opts.transform;
   }
 
   // Validations
