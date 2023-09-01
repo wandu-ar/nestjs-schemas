@@ -15,7 +15,12 @@ import {
   UUIDVersion,
 } from 'class-validator';
 import { $Prop } from './prop.decorator';
-import { CommonPropOpts, Nullable, PropCommonOpts, PropertyOptions } from '../../types';
+import {
+  CommonPropOpts,
+  Nullable,
+  PropCommonOpts,
+  PropertyOptions,
+} from '../../types';
 import {
   CastToStringArrayOptions,
   CastToStringOptions,
@@ -37,15 +42,22 @@ type PropStringCommonOpts = PropCommonOpts & {
   mustExists?: boolean;
 };
 
-export type PropStringOpts = Omit<PropStringCommonOpts, 'arrayMinSize' | 'arrayMaxSize'> & {
+export type PropStringOpts = Omit<
+  PropStringCommonOpts,
+  'arrayMinSize' | 'arrayMaxSize'
+> & {
   arrayMinSize?: undefined;
   arrayMaxSize?: undefined;
 } & CastToStringOptions;
 export type PropStringOptionalOpts = Omit<PropStringOpts, 'default'> & {
   default?: Nullable<PropStringOpts['default']>;
 };
-export type PropStringArrayOpts = PropStringCommonOpts & CastToStringArrayOptions;
-export type PropStringArrayOptionalOpts = Omit<PropStringArrayOpts, 'default'> & {
+export type PropStringArrayOpts = PropStringCommonOpts &
+  CastToStringArrayOptions;
+export type PropStringArrayOptionalOpts = Omit<
+  PropStringArrayOpts,
+  'default'
+> & {
   default?: Nullable<PropStringOpts['default']>;
 };
 type SetPropOptions =
@@ -69,7 +81,9 @@ export function $PropString(opts: PropStringOpts = {}): PropertyDecorator {
   };
 }
 
-export function $PropStringArray(opts: PropStringArrayOpts = {}): PropertyDecorator {
+export function $PropStringArray(
+  opts: PropStringArrayOpts = {},
+): PropertyDecorator {
   return (target: any, property: any) => {
     setProp(
       {
@@ -84,7 +98,9 @@ export function $PropStringArray(opts: PropStringArrayOpts = {}): PropertyDecora
   };
 }
 
-export function $PropStringOptional(opts: PropStringOptionalOpts = {}): PropertyDecorator {
+export function $PropStringOptional(
+  opts: PropStringOptionalOpts = {},
+): PropertyDecorator {
   return (target: any, property: any) => {
     setProp(
       {
@@ -114,7 +130,11 @@ export function $PropStringArrayOptional(
   };
 }
 
-function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: any) {
+function setProp(
+  opts: CommonPropOpts & SetPropOptions,
+  target: any,
+  property: any,
+) {
   // Init final opts
   if (opts.isOptional && opts.default === undefined) {
     opts.default = null;
@@ -140,7 +160,8 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
     },
     transformer: {
       expose: opts.exclude === true || opts.private === true ? false : true,
-      exclude: opts.exclude === true || opts.private === true ? true : undefined,
+      exclude:
+        opts.exclude === true || opts.private === true ? true : undefined,
       type: () => String,
       transform: [],
     },
@@ -158,7 +179,10 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
   };
 
   if (!opts.isArray) {
-    prop.transformer.transform?.push([TransformToString(transformToTypeOpts), { toClassOnly: true }];
+    prop.transformer.transform?.push([
+      TransformToString(transformToTypeOpts),
+      { toClassOnly: true },
+    ]);
   } else {
     prop.transformer.transform?.push([
       TransformToStringArray(transformToTypeOpts),
@@ -167,7 +191,7 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
   }
 
   // User custom transform chain fn
-// Transform is not chainable
+  // Transform is not chainable
   if (opts.transform !== undefined) {
     prop.transformer.transform = opts.transform;
   }
@@ -186,8 +210,10 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
     prop.validators.push(IsArray());
     opts.arrayMinSize = opts.arrayMinSize ?? 0;
     opts.arrayMaxSize = opts.arrayMaxSize ?? 0;
-    if (opts.arrayMinSize > 0) prop.validators.push(ArrayMinSize(opts.arrayMinSize));
-    if (opts.arrayMaxSize > 0) prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
+    if (opts.arrayMinSize > 0)
+      prop.validators.push(ArrayMinSize(opts.arrayMinSize));
+    if (opts.arrayMaxSize > 0)
+      prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
   }
 
   prop.validators.push(IsString({ each: opts.isArray }));
@@ -204,7 +230,9 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
   }
 
   if (opts.isEmail !== undefined && opts.isEmail !== false) {
-    prop.validators.push(opts.isEmail === true ? IsEmail() : IsEmail(opts.isEmail));
+    prop.validators.push(
+      opts.isEmail === true ? IsEmail() : IsEmail(opts.isEmail),
+    );
   }
 
   if (opts.isUUID !== undefined && opts.isUUID !== false) {
