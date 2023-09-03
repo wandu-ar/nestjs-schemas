@@ -1,10 +1,14 @@
-import { $Schema, $PropStringOptional, $PropNumberOptional } from '@wandu/nestjs-schemas';
+import {
+  $Schema,
+  $PropStringOptional,
+  $PropNumberOptional,
+} from '@wandu/nestjs-schemas';
 
 @$Schema()
 export class Address {
   @$PropStringOptional({ isEmail: true })
-  street: string | null = null;
+  street!: string | null;
 
   @$PropNumberOptional()
-  door: number | null = null;
+  door!: number | null;
 }

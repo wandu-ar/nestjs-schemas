@@ -16,11 +16,11 @@ export class Example {
   contactInfo!: ContactInfo;
 
   @$PropStringOptional()
-  gender: string | null = null;
+  gender!: string | null;
 
   @$PropDateOptional()
-  birthday: Date | null = null;
+  birthday!: Date | null;
 
   @$PropStringOptional()
-  nationality: string | null = null;
+  nationality!: string | null;
 }

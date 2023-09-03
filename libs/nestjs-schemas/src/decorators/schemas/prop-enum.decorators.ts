@@ -8,7 +8,12 @@ import {
   IsEnum,
 } from 'class-validator';
 import { $Prop } from './prop.decorator';
-import { CommonPropOpts, Nullable, PropCommonOpts, PropertyOptions } from '../../types';
+import {
+  CommonPropOpts,
+  Nullable,
+  PropCommonOpts,
+  PropertyOptions,
+} from '../../types';
 import { CastToStringArrayOptions, CastToStringOptions } from '../../helpers';
 
 type PropEnumCommonOpts = PropCommonOpts & {
@@ -17,7 +22,10 @@ type PropEnumCommonOpts = PropCommonOpts & {
   unique?: boolean;
 };
 
-export type PropEnumOpts = Omit<PropEnumCommonOpts, 'arrayMinSize' | 'arrayMaxSize'> & {
+export type PropEnumOpts = Omit<
+  PropEnumCommonOpts,
+  'arrayMinSize' | 'arrayMaxSize'
+> & {
   arrayMinSize?: undefined;
   arrayMaxSize?: undefined;
 } & CastToStringOptions;
@@ -64,7 +72,9 @@ export function $PropEnumArray(opts: PropEnumArrayOpts): PropertyDecorator {
   };
 }
 
-export function $PropEnumOptional(opts: PropEnumOptionalOpts): PropertyDecorator {
+export function $PropEnumOptional(
+  opts: PropEnumOptionalOpts,
+): PropertyDecorator {
   return (target: any, property: any) => {
     setProp(
       {
@@ -78,7 +88,9 @@ export function $PropEnumOptional(opts: PropEnumOptionalOpts): PropertyDecorator
   };
 }
 
-export function $PropEnumArrayOptional(opts: PropEnumArrayOptionalOpts): PropertyDecorator {
+export function $PropEnumArrayOptional(
+  opts: PropEnumArrayOptionalOpts,
+): PropertyDecorator {
   return (target: any, property: any) => {
     setProp(
       {
@@ -92,7 +104,11 @@ export function $PropEnumArrayOptional(opts: PropEnumArrayOptionalOpts): Propert
   };
 }
 
-function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: any) {
+function setProp(
+  opts: CommonPropOpts & SetPropOptions,
+  target: any,
+  property: any,
+) {
   // Init final opts
   if (opts.isOptional && opts.default === undefined) {
     opts.default = null;
@@ -110,14 +126,17 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
     },
     mongoose: {
       type: !opts.isArray ? Schema.Types.String : [Schema.Types.String],
-      enum: !opts.isOptional ? Object.values(opts.enum) : [...Object.values(opts.enum), null],
+      enum: !opts.isOptional
+        ? Object.values(opts.enum)
+        : [...Object.values(opts.enum), null],
       required: !opts.isOptional,
       default: opts.default,
       unique: opts.unique,
     },
     transformer: {
       expose: opts.exclude === true || opts.private === true ? false : true,
-      exclude: opts.exclude === true || opts.private === true ? true : undefined,
+      exclude:
+        opts.exclude === true || opts.private === true ? true : undefined,
       type: () => String,
       transform: [],
     },
@@ -167,8 +186,10 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
     prop.validators.push(IsArray());
     opts.arrayMinSize = opts.arrayMinSize ?? 0;
     opts.arrayMaxSize = opts.arrayMaxSize ?? 0;
-    if (opts.arrayMinSize > 0) prop.validators.push(ArrayMinSize(opts.arrayMinSize));
-    if (opts.arrayMaxSize > 0) prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
+    if (opts.arrayMinSize > 0)
+      prop.validators.push(ArrayMinSize(opts.arrayMinSize));
+    if (opts.arrayMaxSize > 0)
+      prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
   }
 
   prop.validators.push(IsEnum(opts.enum, { each: opts.isArray }));

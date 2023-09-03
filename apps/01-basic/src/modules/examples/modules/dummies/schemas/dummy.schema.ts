@@ -18,7 +18,8 @@ export type DummyDocument = HydratedDocument<Dummy>;
 
 export const DUMMIES_COLLECTION = 'dummies';
 
-export const DUMMY_PK: typeof DEFAULT_ID_FIELD_NAME & keyof Dummy = DEFAULT_ID_FIELD_NAME;
+export const DUMMY_PK: typeof DEFAULT_ID_FIELD_NAME & keyof Dummy =
+  DEFAULT_ID_FIELD_NAME;
 
 @$Schema({
   mongoose: {
@@ -37,7 +38,7 @@ export class Dummy {
   numberExample!: number;
 
   @$PropBooleanOptional()
-  booleanExample: boolean | null = null;
+  booleanExample!: boolean | null;
 
   @$PropDate()
   dateExample!: Date;

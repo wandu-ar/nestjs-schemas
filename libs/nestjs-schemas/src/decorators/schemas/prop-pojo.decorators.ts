@@ -8,7 +8,12 @@ import {
   IsObject,
 } from 'class-validator';
 import { $Prop } from './prop.decorator';
-import { CommonPropOpts, Nullable, PropCommonOpts, PropertyOptions } from '../../types';
+import {
+  CommonPropOpts,
+  Nullable,
+  PropCommonOpts,
+  PropertyOptions,
+} from '../../types';
 import {
   CastToPojoArrayOptions,
   CastToPojoOptions,
@@ -18,7 +23,10 @@ import {
 
 type PropPojoCommonOpts = PropCommonOpts /*& {}*/;
 
-export type PropPojoOpts = Omit<PropPojoCommonOpts, 'arrayMinSize' | 'arrayMaxSize'> & {
+export type PropPojoOpts = Omit<
+  PropPojoCommonOpts,
+  'arrayMinSize' | 'arrayMaxSize'
+> & {
   arrayMinSize?: undefined;
   arrayMaxSize?: undefined;
 } & CastToPojoOptions;
@@ -50,7 +58,9 @@ export function $PropPojo(opts: PropPojoOpts = {}): PropertyDecorator {
   };
 }
 
-export function $PropPojoArray(opts: PropPojoArrayOpts = {}): PropertyDecorator {
+export function $PropPojoArray(
+  opts: PropPojoArrayOpts = {},
+): PropertyDecorator {
   return (target: any, property: any) => {
     setProp(
       {
@@ -65,7 +75,9 @@ export function $PropPojoArray(opts: PropPojoArrayOpts = {}): PropertyDecorator 
   };
 }
 
-export function $PropPojoOptional(opts: PropPojoOptionalOpts = {}): PropertyDecorator {
+export function $PropPojoOptional(
+  opts: PropPojoOptionalOpts = {},
+): PropertyDecorator {
   return (target: any, property: any) => {
     setProp(
       {
@@ -79,7 +91,9 @@ export function $PropPojoOptional(opts: PropPojoOptionalOpts = {}): PropertyDeco
   };
 }
 
-export function $PropPojoArrayOptional(opts: PropPojoArrayOptionalOpts = {}): PropertyDecorator {
+export function $PropPojoArrayOptional(
+  opts: PropPojoArrayOptionalOpts = {},
+): PropertyDecorator {
   return (target: any, property: any) => {
     setProp(
       {
@@ -93,7 +107,11 @@ export function $PropPojoArrayOptional(opts: PropPojoArrayOptionalOpts = {}): Pr
   };
 }
 
-function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: any) {
+function setProp(
+  opts: CommonPropOpts & SetPropOptions,
+  target: any,
+  property: any,
+) {
   // Init final opts
   if (opts.isOptional && opts.default === undefined) {
     opts.default = null;
@@ -119,7 +137,8 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
     },
     transformer: {
       expose: opts.exclude === true || opts.private === true ? false : true,
-      exclude: opts.exclude === true || opts.private === true ? true : undefined,
+      exclude:
+        opts.exclude === true || opts.private === true ? true : undefined,
       type: () => Object,
       transform: [],
     },
@@ -143,7 +162,10 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
       { toClassOnly: true },
     ]);
     // To plain only
-    prop.transformer.transform?.push([TransformToPojo(), { toPlainOnly: true }]);
+    prop.transformer.transform?.push([
+      TransformToPojo(),
+      { toPlainOnly: true },
+    ]);
   } else {
     // To class only
     prop.transformer.transform?.push([
@@ -154,7 +176,10 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
       { toClassOnly: true },
     ]);
     // To plain only
-    prop.transformer.transform?.push([TransformToPojoArray(), { toPlainOnly: true }]);
+    prop.transformer.transform?.push([
+      TransformToPojoArray(),
+      { toPlainOnly: true },
+    ]);
   }
 
   // User custom transform chain fn
@@ -177,8 +202,10 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
     prop.validators.push(IsArray());
     opts.arrayMinSize = opts.arrayMinSize ?? 0;
     opts.arrayMaxSize = opts.arrayMaxSize ?? 0;
-    if (opts.arrayMinSize > 0) prop.validators.push(ArrayMinSize(opts.arrayMinSize));
-    if (opts.arrayMaxSize > 0) prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
+    if (opts.arrayMinSize > 0)
+      prop.validators.push(ArrayMinSize(opts.arrayMinSize));
+    if (opts.arrayMaxSize > 0)
+      prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
   }
 
   prop.validators.push(IsObject({ each: opts.isArray }));

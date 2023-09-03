@@ -9,11 +9,19 @@ import {
 } from 'class-validator';
 import { $Prop } from './prop.decorator';
 import { ClassConstructor } from 'class-transformer';
-import { CommonPropOpts, Nullable, PropCommonOpts, PropertyOptions } from '../../types';
+import {
+  CommonPropOpts,
+  Nullable,
+  PropCommonOpts,
+  PropertyOptions,
+} from '../../types';
 
 type PropInstanceCommonOpts = PropCommonOpts /*& {}*/;
 
-export type PropInstanceOpts<T> = Omit<PropInstanceCommonOpts, 'arrayMinSize' | 'arrayMaxSize'> & {
+export type PropInstanceOpts<T> = Omit<
+  PropInstanceCommonOpts,
+  'arrayMinSize' | 'arrayMaxSize'
+> & {
   arrayMinSize?: undefined;
   arrayMaxSize?: undefined;
 } & {
@@ -136,7 +144,8 @@ function setProp<T>(
     },
     transformer: {
       expose: opts.exclude === true || opts.private === true ? false : true,
-      exclude: opts.exclude === true || opts.private === true ? true : undefined,
+      exclude:
+        opts.exclude === true || opts.private === true ? true : undefined,
       type: () => type,
       transform: [],
     },
@@ -164,8 +173,10 @@ function setProp<T>(
     prop.validators.push(IsArray());
     opts.arrayMinSize = opts.arrayMinSize ?? 0;
     opts.arrayMaxSize = opts.arrayMaxSize ?? 0;
-    if (opts.arrayMinSize > 0) prop.validators.push(ArrayMinSize(opts.arrayMinSize));
-    if (opts.arrayMaxSize > 0) prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
+    if (opts.arrayMinSize > 0)
+      prop.validators.push(ArrayMinSize(opts.arrayMinSize));
+    if (opts.arrayMaxSize > 0)
+      prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
   }
 
   prop.validators.push(ValidateNested({ each: opts.isArray }));

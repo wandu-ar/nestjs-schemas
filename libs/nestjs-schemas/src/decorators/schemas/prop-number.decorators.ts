@@ -13,7 +13,12 @@ import {
   IsPositive,
 } from 'class-validator';
 import { $Prop } from './prop.decorator';
-import { CommonPropOpts, Nullable, PropCommonOpts, PropertyOptions } from '../../types';
+import {
+  CommonPropOpts,
+  Nullable,
+  PropCommonOpts,
+  PropertyOptions,
+} from '../../types';
 import {
   CastToNumberArrayOptions,
   CastToNumberOptions,
@@ -32,15 +37,22 @@ type PropNumberCommonOpts = PropCommonOpts & {
   mustExists?: boolean;
 } & IsNumberOptions;
 
-export type PropNumberOpts = Omit<PropNumberCommonOpts, 'arrayMinSize' | 'arrayMaxSize'> & {
+export type PropNumberOpts = Omit<
+  PropNumberCommonOpts,
+  'arrayMinSize' | 'arrayMaxSize'
+> & {
   arrayMinSize?: undefined;
   arrayMaxSize?: undefined;
 } & CastToNumberOptions;
 export type PropNumberOptionalOpts = Omit<PropNumberOpts, 'default'> & {
   default?: Nullable<PropNumberOpts['default']>;
 };
-export type PropNumberArrayOpts = PropNumberCommonOpts & CastToNumberArrayOptions;
-export type PropNumberArrayOptionalOpts = Omit<PropNumberArrayOpts, 'default'> & {
+export type PropNumberArrayOpts = PropNumberCommonOpts &
+  CastToNumberArrayOptions;
+export type PropNumberArrayOptionalOpts = Omit<
+  PropNumberArrayOpts,
+  'default'
+> & {
   default?: Nullable<PropNumberOpts['default']>;
 };
 type SetPropOptions =
@@ -64,7 +76,9 @@ export function $PropNumber(opts: PropNumberOpts = {}): PropertyDecorator {
   };
 }
 
-export function $PropNumberArray(opts: PropNumberArrayOpts = {}): PropertyDecorator {
+export function $PropNumberArray(
+  opts: PropNumberArrayOpts = {},
+): PropertyDecorator {
   return (target: any, property: any) => {
     setProp(
       {
@@ -79,7 +93,9 @@ export function $PropNumberArray(opts: PropNumberArrayOpts = {}): PropertyDecora
   };
 }
 
-export function $PropNumberOptional(opts: PropNumberOptionalOpts = {}): PropertyDecorator {
+export function $PropNumberOptional(
+  opts: PropNumberOptionalOpts = {},
+): PropertyDecorator {
   return (target: any, property: any) => {
     setProp(
       {
@@ -109,7 +125,11 @@ export function $PropNumberArrayOptional(
   };
 }
 
-function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: any) {
+function setProp(
+  opts: CommonPropOpts & SetPropOptions,
+  target: any,
+  property: any,
+) {
   // Init final opts
   if (opts.isOptional && opts.default === undefined) {
     opts.default = null;
@@ -133,7 +153,8 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
     },
     transformer: {
       expose: opts.exclude === true || opts.private === true ? false : true,
-      exclude: opts.exclude === true || opts.private === true ? true : undefined,
+      exclude:
+        opts.exclude === true || opts.private === true ? true : undefined,
       type: () => Number,
       transform: [],
     },
@@ -187,8 +208,10 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
     prop.validators.push(IsArray());
     opts.arrayMinSize = opts.arrayMinSize ?? 0;
     opts.arrayMaxSize = opts.arrayMaxSize ?? 0;
-    if (opts.arrayMinSize > 0) prop.validators.push(ArrayMinSize(opts.arrayMinSize));
-    if (opts.arrayMaxSize > 0) prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
+    if (opts.arrayMinSize > 0)
+      prop.validators.push(ArrayMinSize(opts.arrayMinSize));
+    if (opts.arrayMaxSize > 0)
+      prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
   }
 
   prop.validators.push(
@@ -203,12 +226,15 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
   );
 
   // Lenght validation
-  if (opts.min !== undefined) prop.validators.push(Min(opts.min, { each: opts.isArray }));
-  if (opts.max !== undefined) prop.validators.push(Max(opts.max, { each: opts.isArray }));
+  if (opts.min !== undefined)
+    prop.validators.push(Min(opts.min, { each: opts.isArray }));
+  if (opts.max !== undefined)
+    prop.validators.push(Max(opts.max, { each: opts.isArray }));
 
   // Format validation
   if (opts.isInt === true) prop.validators.push(IsInt({ each: opts.isArray }));
-  if (opts.isPositive === true) prop.validators.push(IsPositive({ each: opts.isArray }));
+  if (opts.isPositive === true)
+    prop.validators.push(IsPositive({ each: opts.isArray }));
 
   // Other validations
   if (opts.validators !== undefined) {
