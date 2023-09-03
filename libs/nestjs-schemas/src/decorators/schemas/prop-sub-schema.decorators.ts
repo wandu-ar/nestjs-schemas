@@ -7,7 +7,12 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { $Prop } from './prop.decorator';
-import { CommonPropOpts, Nullable, PropCommonOpts, PropertyOptions } from '../../types';
+import {
+  CommonPropOpts,
+  Nullable,
+  PropCommonOpts,
+  PropertyOptions,
+} from '../../types';
 import { ClassConstructor } from 'class-transformer';
 import { $Metadata } from './metadata.decorator';
 import { METADATA, DEFAULT_ID_FIELD_NAME } from '../../constants';
@@ -144,7 +149,8 @@ function setProp<T>(
     },
     transformer: {
       expose: opts.exclude === true || opts.private === true ? false : true,
-      exclude: opts.exclude === true || opts.private === true ? true : undefined,
+      exclude:
+        opts.exclude === true || opts.private === true ? true : undefined,
       type: () => subSchema,
       transform: [],
     },
@@ -165,9 +171,11 @@ function setProp<T>(
 
   if (typeof opts.lookup !== 'string') {
     if (opts.lookup.localField) lookup.localField = opts.lookup.localField;
-    if (opts.lookup.foreignField) lookup.foreignField = opts.lookup.foreignField;
+    if (opts.lookup.foreignField)
+      lookup.foreignField = opts.lookup.foreignField;
     if (opts.lookup.preserveNullAndEmptyArrays)
-      lookup.preserveNullAndEmptyArrays = opts.lookup.preserveNullAndEmptyArrays;
+      lookup.preserveNullAndEmptyArrays =
+        opts.lookup.preserveNullAndEmptyArrays;
   }
 
   prop.decorators.__propDef.push(
@@ -194,8 +202,10 @@ function setProp<T>(
     prop.validators.push(IsArray());
     opts.arrayMinSize = opts.arrayMinSize ?? 0;
     opts.arrayMaxSize = opts.arrayMaxSize ?? 0;
-    if (opts.arrayMinSize > 0) prop.validators.push(ArrayMinSize(opts.arrayMinSize));
-    if (opts.arrayMaxSize > 0) prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
+    if (opts.arrayMinSize > 0)
+      prop.validators.push(ArrayMinSize(opts.arrayMinSize));
+    if (opts.arrayMaxSize > 0)
+      prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
   }
 
   prop.validators.push(ValidateNested({ each: opts.isArray }));

@@ -1,7 +1,18 @@
 import { Schema } from 'mongoose';
-import { IsArray, ArrayMinSize, ArrayMaxSize, IsNotEmpty, IsOptional } from 'class-validator';
+import {
+  IsArray,
+  ArrayMinSize,
+  ArrayMaxSize,
+  IsNotEmpty,
+  IsOptional,
+} from 'class-validator';
 import { $Prop } from './prop.decorator';
-import { CommonPropOpts, Nullable, PropCommonOpts, PropertyOptions } from '../../types';
+import {
+  CommonPropOpts,
+  Nullable,
+  PropCommonOpts,
+  PropertyOptions,
+} from '../../types';
 import {
   CastToUUIDv4ArrayOptions,
   CastToUUIDv4Options,
@@ -19,15 +30,22 @@ type PropUUIDv4CommonOpts = PropCommonOpts & {
   unique?: boolean;
 };
 
-export type PropUUIDv4Opts = Omit<PropUUIDv4CommonOpts, 'arrayMinSize' | 'arrayMaxSize'> & {
+export type PropUUIDv4Opts = Omit<
+  PropUUIDv4CommonOpts,
+  'arrayMinSize' | 'arrayMaxSize'
+> & {
   arrayMinSize?: undefined;
   arrayMaxSize?: undefined;
 } & CastToUUIDv4Options;
 export type PropUUIDv4OptionalOpts = Omit<PropUUIDv4Opts, 'default'> & {
   default?: Nullable<PropUUIDv4Opts['default']>;
 };
-export type PropUUIDv4ArrayOpts = PropUUIDv4CommonOpts & CastToUUIDv4ArrayOptions;
-export type PropUUIDv4ArrayOptionalOpts = Omit<PropUUIDv4ArrayOpts, 'default'> & {
+export type PropUUIDv4ArrayOpts = PropUUIDv4CommonOpts &
+  CastToUUIDv4ArrayOptions;
+export type PropUUIDv4ArrayOptionalOpts = Omit<
+  PropUUIDv4ArrayOpts,
+  'default'
+> & {
   default?: Nullable<PropUUIDv4Opts['default']>;
 };
 type SetPropOptions =
@@ -51,7 +69,9 @@ export function $PropUUIDv4(opts: PropUUIDv4Opts = {}): PropertyDecorator {
   };
 }
 
-export function $PropUUIDv4Array(opts: PropUUIDv4ArrayOpts = {}): PropertyDecorator {
+export function $PropUUIDv4Array(
+  opts: PropUUIDv4ArrayOpts = {},
+): PropertyDecorator {
   return (target: any, property: any) => {
     setProp(
       {
@@ -66,7 +86,9 @@ export function $PropUUIDv4Array(opts: PropUUIDv4ArrayOpts = {}): PropertyDecora
   };
 }
 
-export function $PropUUIDv4Optional(opts: PropUUIDv4OptionalOpts = {}): PropertyDecorator {
+export function $PropUUIDv4Optional(
+  opts: PropUUIDv4OptionalOpts = {},
+): PropertyDecorator {
   return (target: any, property: any) => {
     setProp(
       {
@@ -96,7 +118,11 @@ export function $PropUUIDv4ArrayOptional(
   };
 }
 
-function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: any) {
+function setProp(
+  opts: CommonPropOpts & SetPropOptions,
+  target: any,
+  property: any,
+) {
   // Init final opts
   if (opts.isOptional && opts.default === undefined) {
     opts.default = null;
@@ -112,7 +138,9 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
     swagger: {
       type: 'string',
       description: ref
-        ? `Reference to ${ref.field ? ref.field : 'id'} field of ${ref.collection} documents`
+        ? `Reference to ${ref.field ? ref.field : 'id'} field of ${
+            ref.collection
+          } documents`
         : undefined,
       format: 'uuid v4 format',
       example: opts.isArray
@@ -132,7 +160,8 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
     },
     transformer: {
       expose: opts.exclude === true || opts.private === true ? false : true,
-      exclude: opts.exclude === true || opts.private === true ? true : undefined,
+      exclude:
+        opts.exclude === true || opts.private === true ? true : undefined,
       type: () => Binary,
       transform: [],
     },
@@ -156,7 +185,10 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
       { toClassOnly: true },
     ]);
     // To plain only
-    prop.transformer.transform?.push([TransformToString(), { toPlainOnly: true }]);
+    prop.transformer.transform?.push([
+      TransformToString(),
+      { toPlainOnly: true },
+    ]);
   } else {
     // To class only
     prop.transformer.transform?.push([
@@ -167,7 +199,10 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
       { toClassOnly: true },
     ]);
     // To plain only
-    prop.transformer.transform?.push([TransformToStringArray(), { toPlainOnly: true }]);
+    prop.transformer.transform?.push([
+      TransformToStringArray(),
+      { toPlainOnly: true },
+    ]);
   }
 
   // User custom transform chain fn
@@ -195,8 +230,10 @@ function setProp(opts: CommonPropOpts & SetPropOptions, target: any, property: a
     prop.validators.push(IsArray());
     opts.arrayMinSize = opts.arrayMinSize ?? 0;
     opts.arrayMaxSize = opts.arrayMaxSize ?? 0;
-    if (opts.arrayMinSize > 0) prop.validators.push(ArrayMinSize(opts.arrayMinSize));
-    if (opts.arrayMaxSize > 0) prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
+    if (opts.arrayMinSize > 0)
+      prop.validators.push(ArrayMinSize(opts.arrayMinSize));
+    if (opts.arrayMaxSize > 0)
+      prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
   }
 
   // Other validations

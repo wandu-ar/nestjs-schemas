@@ -89,6 +89,8 @@ export type PropCommonOpts = Pick<
   } & {
     arrayMinSize?: number;
     arrayMaxSize?: number;
+  } & {
+    isVirtual?: boolean;
   };
 
 export type RecursiveRequired<T> = {
