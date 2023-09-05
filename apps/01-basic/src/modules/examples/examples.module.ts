@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { DummiesModule, ManikinsModule } from './modules';
+import { DummiesModule, LegsModule, ManikinsModule } from './modules';
 import { ExamplesService } from './services/examples.service';
 
 @Module({
-  imports: [DummiesModule, ManikinsModule],
+  imports: [DummiesModule, ManikinsModule, LegsModule],
   providers: [ExamplesService],
   exports: [ExamplesService],
 })

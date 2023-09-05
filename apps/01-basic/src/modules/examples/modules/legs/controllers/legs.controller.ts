@@ -20,34 +20,33 @@ import {
   DEFAULT_ID_FIELD_NAME,
 } from '@wandu/nestjs-schemas';
 
-import { CreateManikinDto, ManikinDto, UpdateManikinDto } from '../dtos';
-import { Manikin, MANIKIN_PK } from '../schemas';
-import { ManikinsModelService, ManikinsService } from '../services';
-import { ManikinListDto } from '../dtos/manikin-list.dto';
+import { CreateLegDto, LegDto, UpdateLegDto } from '../dtos';
+import { Leg, LEG_PK } from '../schemas';
+import { LegsModelService, LegsService } from '../services';
 
-@ApiTags('Manikins')
+@ApiTags('Legs')
 @Controller()
-export class ManikinsController extends BaseController<
-  Manikin,
-  typeof MANIKIN_PK,
-  ManikinsModelService,
-  ManikinsService,
-  ManikinDto
+export class LegsController extends BaseController<
+  Leg,
+  typeof LEG_PK,
+  LegsModelService,
+  LegsService,
+  LegDto
 > {
-  constructor(protected readonly service: ManikinsService) {
+  constructor(protected readonly service: LegsService) {
     super(service);
   }
 
   @Get('/')
-  @ApiPaginatedResponse(ManikinDto)
+  @ApiPaginatedResponse(LegDto)
   async listAll(@Query() params: ListParamsDto) {
     return await super._listAllDocuments(params);
   }
 
-  @Get('/full')
-  @ApiPaginatedResponse(ManikinListDto)
-  async listAllFull(@Query() params: ListParamsDto) {
-    return await super._listAllDocuments(params, { returnAs: ManikinListDto });
+  @Get('/populated')
+  @ApiPaginatedResponse(LegDto)
+  async listAllPopulated(@Query() params: ListParamsDto) {
+    return await super._listAllDocuments(params);
   }
 
   @Get('/:id')
@@ -57,7 +56,7 @@ export class ManikinsController extends BaseController<
   }
 
   @Post('/')
-  async create(@Body() input: CreateManikinDto): Promise<ManikinDto> {
+  async create(@Body() input: CreateLegDto): Promise<LegDto> {
     return await super._create(input);
   }
 
@@ -65,8 +64,8 @@ export class ManikinsController extends BaseController<
   @ApiParamUUIDv4(DEFAULT_ID_FIELD_NAME)
   async update(
     @Param(DEFAULT_ID_FIELD_NAME, ParseUUIDv4Pipe) id: UUIDv4,
-    @Body() input: UpdateManikinDto,
-  ): Promise<ManikinDto> {
+    @Body() input: UpdateLegDto,
+  ): Promise<LegDto> {
     return await super._update(id, input);
   }
 
