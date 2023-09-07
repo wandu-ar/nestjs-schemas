@@ -151,6 +151,7 @@ function setProp<T>(
     },
     validators: [],
     decorators: { __propDef: [] },
+    formItem: opts.formItem ?? null,
   };
 
   // User custom transform chain fn

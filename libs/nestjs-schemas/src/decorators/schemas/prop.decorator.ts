@@ -22,7 +22,9 @@ export function $Prop(options: PropertyOptions = {}): PropertyDecorator {
                   throw new Error(`
                     Invalid value detected in the decorators config of property ${property} in schema ${
                     target.name ?? target.constructor.name
-                  } => ${Decorator.name ?? Decorator.constructor.name ?? Decorator}.
+                  } => ${
+                    Decorator.name ?? Decorator.constructor.name ?? Decorator
+                  }.
                     The value passed is not a valid decorator.
                     Remember make call over decorator function (add parenthesis).
                     For example, CustomDecorator(). Warning to use CustomDecorator without valid brackets.
@@ -77,7 +79,10 @@ export function $Prop(options: PropertyOptions = {}): PropertyDecorator {
                 Array.isArray(options.transformer.type) &&
                 typeof options.transformer.type[0] === 'function'
               ) {
-                Type(options.transformer.type[0], options.transformer.type[1])(target, property);
+                Type(options.transformer.type[0], options.transformer.type[1])(
+                  target,
+                  property,
+                );
               }
             }
           }
@@ -108,6 +113,12 @@ export function $Prop(options: PropertyOptions = {}): PropertyDecorator {
         case 'mongoose':
           if (options.mongoose !== undefined) {
             Prop(options.mongoose)(target, property);
+          }
+          break;
+        case 'formItem':
+          if (options.formItem) {
+            const Decorator = options.formItem;
+            Decorator(target, property);
           }
           break;
       }

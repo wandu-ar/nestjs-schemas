@@ -73,6 +73,7 @@ export type PropertyOptions = {
   validators?: PropertyDecorator[];
   mongoose?: PropOptions;
   decorators?: { [key: string]: PropertyDecorator[] };
+  formItem?: PropertyDecorator | null;
 };
 
 export type CommonPropOpts = {
@@ -89,7 +90,7 @@ export type PropCommonOpts = Pick<
   } & {
     arrayMinSize?: number;
     arrayMaxSize?: number;
-  };
+  } & Pick<PropertyOptions, 'formItem'>;
 
 export type RecursiveRequired<T> = {
   [P in keyof T]?: RecursiveRequired<T[P]>;
