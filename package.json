@@ -68,7 +68,6 @@
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^5.60.1",
     "@typescript-eslint/parser": "^5.60.1",
-    "@wandu/nestjs-dynamic-forms": "^10.4.0-alpha.2",
     "@wandu/nestjs-schematics": "^10.0.1",
     "eslint": "^8.43.0",
     "eslint-config-prettier": "^8.8.0",
