@@ -444,7 +444,11 @@ export abstract class BaseService<
       transformOptions?: ClassTransformOptions;
     },
   ) {
-    return await this._model.updateMany(filter, data, options);
+    return await this._model.updateMany(
+      filter,
+      await this.beforeUpdate(data),
+      options,
+    );
   }
 
   /**
@@ -457,7 +461,11 @@ export abstract class BaseService<
       transformOptions?: ClassTransformOptions;
     },
   ) {
-    return await this._model.updateOne(filter, data, options);
+    return await this._model.updateOne(
+      filter,
+      await this.beforeUpdate(data),
+      options,
+    );
   }
 
   /**
