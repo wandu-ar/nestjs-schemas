@@ -161,6 +161,7 @@ function setProp(
     validators: [],
     decorators: { __propDef: [] },
     formItem: opts.formItem ?? null,
+    opts,
   };
 
   // Set transform functions

@@ -157,6 +157,7 @@ function setProp<T>(
     validators: [],
     decorators: { __propDef: [] },
     formItem: opts.formItem ?? null,
+    opts,
   };
 
   // Configure lookup

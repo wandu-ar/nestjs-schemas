@@ -49,7 +49,9 @@ class MetadataStorageHostV1 {
         });
       }
     } catch (err) {
-      throw new Error(`Error trying detect type for prop '${property}' on schema ${schemaName}`);
+      throw new Error(
+        `Error trying detect type for prop '${property}' on schema ${schemaName}`,
+      );
     }
   }
 
@@ -62,7 +64,9 @@ class MetadataStorageHostV1 {
     const schemaName = this._getName(schema);
     const schemaDef = this._schemas.get(schemaName);
     if (!schemaDef) {
-      throw new Error(`Error setting metadata: Schema ${schemaName} not found.`);
+      throw new Error(
+        `Error setting metadata: Schema ${schemaName} not found.`,
+      );
     }
     if (property === undefined) {
       schemaDef.metadata.set(key, value);
@@ -89,7 +93,8 @@ class MetadataStorageHostV1 {
       [...this._schemas].filter(([key, value]) => {
         return (
           opts.includeMiddleSchemas === true ||
-          (<any>(<unknown>value.factory))._OPENAPI_METADATA_FACTORY === undefined ||
+          (<any>(<unknown>value.factory))._OPENAPI_METADATA_FACTORY ===
+            undefined ||
           value.parent !== null
         );
       }),
@@ -136,7 +141,9 @@ class MetadataStorageHostV1 {
     const schemaName = this._getName(schema);
     const schemaDef = this._schemas.get(schemaName);
     if (!schemaDef) {
-      throw new Error(`Error getting metadata: Schema ${schemaName} not found.`);
+      throw new Error(
+        `Error getting metadata: Schema ${schemaName} not found.`,
+      );
     }
     if (property === undefined) {
       return schemaDef.metadata.get(key);
@@ -187,7 +194,8 @@ class MetadataStorageHostV1 {
           const newProp = destProps.get(key);
           if (newProp) {
             newProp.type.required = false;
-            if (newProp.options.swagger) newProp.options.swagger.required = false;
+            if (newProp.options.swagger)
+              newProp.options.swagger.required = false;
           }
         }
       }
@@ -200,13 +208,18 @@ class MetadataStorageHostV1 {
       swagger: options.swagger ? { ...options.swagger } : undefined,
       transformer: options.transformer ? { ...options.transformer } : undefined,
       validators: options.validators ? [...options.validators] : undefined,
+      opts: options.opts ? { ...options.opts } : undefined,
     };
   }
 
   /**
    * Try to recognize type of schema property
    */
-  private _objectTypeDetector(schema: any, property: any, options: PropertyOptions = {}): PropType {
+  private _objectTypeDetector(
+    schema: any,
+    property: any,
+    options: PropertyOptions = {},
+  ): PropType {
     const reflectedType = Reflect.getMetadata('design:type', schema, property);
 
     let type: any = 'undefined';
@@ -240,7 +253,10 @@ class MetadataStorageHostV1 {
       className = this._getName(type);
     }
 
-    if (className === 'undefined' || className === 'Array' /*|| className === 'Object'*/) {
+    if (
+      className === 'undefined' ||
+      className === 'Array' /*|| className === 'Object'*/
+    ) {
       throw new Error(`Unrecognized type`);
     }
 
@@ -288,4 +304,5 @@ class MetadataStorageHostV1 {
 ///
 const globalRef: any = global;
 export const _MetadataStorageV1: MetadataStorageHostV1 =
-  globalRef._MetadataStorageV1 || (globalRef._MetadataStorageV1 = new MetadataStorageHostV1());
+  globalRef._MetadataStorageV1 ||
+  (globalRef._MetadataStorageV1 = new MetadataStorageHostV1());

@@ -74,6 +74,7 @@ export type PropertyOptions = {
   mongoose?: PropOptions;
   decorators?: { [key: string]: PropertyDecorator[] };
   formItem?: PropertyDecorator | null;
+  opts?: any;
 };
 
 export type CommonPropOpts = {
