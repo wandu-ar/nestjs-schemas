@@ -117,8 +117,17 @@ export function $Prop(options: PropertyOptions = {}): PropertyDecorator {
           break;
         case 'formItem':
           if (options.formItem) {
-            const Decorator = options.formItem;
-            Decorator(target, property);
+            if (typeof options.formItem === 'function') {
+              const Decorator = options.formItem;
+              Decorator(target, property);
+            } else {
+              _MetadataStorageV1.setMetadata(
+                'forms:formItemBasic',
+                { opts: options.formItem, kind: undefined },
+                target,
+                property,
+              );
+            }
           }
           break;
       }

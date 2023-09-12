@@ -73,7 +73,19 @@ export type PropertyOptions = {
   validators?: PropertyDecorator[];
   mongoose?: PropOptions;
   decorators?: { [key: string]: PropertyDecorator[] };
-  formItem?: PropertyDecorator | null;
+  formItem?:
+    | PropertyDecorator
+    | {
+        // Extracted of FormItemInput of DynamicForms / FormItemBasicSettings
+        label?: string | null;
+        readonly?: boolean;
+        disabled?: boolean;
+        description?: string | null;
+        hint?: string | null;
+        section?: string;
+        group?: string;
+      }
+    | null;
   opts?: any;
 };
 
