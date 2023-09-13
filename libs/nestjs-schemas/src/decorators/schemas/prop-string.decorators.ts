@@ -210,12 +210,17 @@ function setProp(
   // Type validation
   if (opts.isArray) {
     prop.validators.push(IsArray());
-    opts.arrayMinSize = opts.arrayMinSize ?? 0;
-    opts.arrayMaxSize = opts.arrayMaxSize ?? 0;
-    if (opts.arrayMinSize > 0)
+    opts.arrayMinSize = opts.arrayMinSize ?? (opts.isOptional ? 0 : 1);
+    opts.arrayMaxSize = opts.arrayMaxSize ?? null;
+    if (opts.arrayMaxSize && opts.arrayMaxSize < opts.arrayMinSize) {
+      throw new Error('Array max size is lower than array min size');
+    }
+    if (opts.arrayMinSize > 0) {
       prop.validators.push(ArrayMinSize(opts.arrayMinSize));
-    if (opts.arrayMaxSize > 0)
+    }
+    if (opts.arrayMaxSize && opts.arrayMaxSize > 0) {
       prop.validators.push(ArrayMaxSize(opts.arrayMaxSize));
+    }
   }
 
   prop.validators.push(IsString({ each: opts.isArray }));

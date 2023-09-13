@@ -102,7 +102,7 @@ export type PropCommonOpts = Pick<
     private?: boolean;
   } & {
     arrayMinSize?: number;
-    arrayMaxSize?: number;
+    arrayMaxSize?: number | null;
   } & Pick<PropertyOptions, 'formItem'>;
 
 export type RecursiveRequired<T> = {
