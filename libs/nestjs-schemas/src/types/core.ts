@@ -88,6 +88,7 @@ export type PropertyOptions = {
         disabled?: boolean;
         description?: string | null;
         hint?: string | null;
+        childTitle?: string | null;
         section?: string;
         group?: string;
       }
