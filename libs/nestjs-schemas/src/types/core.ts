@@ -52,6 +52,12 @@ export type SchemaOptions<T = any> = {
   mongoose?: mongoose.SchemaOptions;
   validation?: SchemaValidationFn<T>;
   decorators?: { [key: string]: ClassDecorator[] };
+  formItem?:
+    | ClassDecorator
+    | {
+        label?: string | null;
+        description?: string | null;
+      };
 };
 
 export type PropertyOptions = {

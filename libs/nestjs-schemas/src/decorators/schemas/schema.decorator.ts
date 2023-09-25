@@ -10,7 +10,24 @@ export function $Schema(options: SchemaOptions = {}): ClassDecorator {
 
     // Add metadata
     if (options?.validation !== undefined) {
-      _MetadataStorageV1.setMetadata(METADATA.INTEGRITY_VALIDATION, options.validation, target);
+      _MetadataStorageV1.setMetadata(
+        METADATA.INTEGRITY_VALIDATION,
+        options.validation,
+        target,
+      );
+    }
+
+    if (options?.formItem !== undefined && options.formItem) {
+      if (typeof options.formItem === 'function') {
+        const Decorator = options.formItem;
+        Decorator(target);
+      } else {
+        _MetadataStorageV1.setMetadata(
+          METADATA.FORM_ITEM_BASIC,
+          { opts: options.formItem, kind: 'OBJECT' },
+          target,
+        );
+      }
     }
 
     // Apply custom decorators
