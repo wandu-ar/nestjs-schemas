@@ -1,9 +1,27 @@
 import { Rule, RuleSet } from '../types';
 import { FilterQuery } from 'mongoose';
-import { BadRequestException, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import { ObjectId, toUUIDv4 } from './mongodb';
 import { isUUID } from 'class-validator';
+import {
+  castToBoolean,
+  castToBooleanArray,
+  castToDate,
+  castToDateArray,
+  castToNumber,
+  castToNumberArray,
+  castToObjectId,
+  castToObjectIdArray,
+  castToString,
+  castToStringArray,
+  castToUUIDv4,
+  castToUUIDv4Array,
+} from './cast';
 
 export class QueryBuilderParser {
   private readonly conditions = {
@@ -13,14 +31,25 @@ export class QueryBuilderParser {
 
   private readonly constraints: {
     [operation: string]: {
-      field: ('String' | 'Binary' | 'ObjectId' | 'Date' | 'Number' | 'Boolean' | string)[];
+      field: (
+        | 'String'
+        | 'Binary'
+        | 'ObjectId'
+        | 'Date'
+        | 'Number'
+        | 'Boolean'
+        | string
+      )[];
       validation: (value: any) => boolean;
     }[];
   } = {
     equal: [
       { field: ['String'], validation: (value: any) => this.isString(value) },
       { field: ['Binary'], validation: (value: any) => this.isBinary(value) },
-      { field: ['ObjectId'], validation: (value: any) => this.isObjectId(value) },
+      {
+        field: ['ObjectId'],
+        validation: (value: any) => this.isObjectId(value),
+      },
       { field: ['Date'], validation: (value: any) => this.isDate(value) },
       { field: ['Number'], validation: (value: any) => this.isNumber(value) },
       { field: ['Boolean'], validation: (value: any) => this.isBoolean(value) },
@@ -28,14 +57,23 @@ export class QueryBuilderParser {
     notEqual: [
       { field: ['String'], validation: (value: any) => this.isString(value) },
       { field: ['Binary'], validation: (value: any) => this.isBinary(value) },
-      { field: ['ObjectId'], validation: (value: any) => this.isObjectId(value) },
+      {
+        field: ['ObjectId'],
+        validation: (value: any) => this.isObjectId(value),
+      },
       { field: ['Date'], validation: (value: any) => this.isDate(value) },
       { field: ['Number'], validation: (value: any) => this.isNumber(value) },
       { field: ['Boolean'], validation: (value: any) => this.isBoolean(value) },
     ],
-    startsWith: [{ field: ['String'], validation: (value: any) => this.isString(value) }],
-    endsWith: [{ field: ['String'], validation: (value: any) => this.isString(value) }],
-    contains: [{ field: ['String'], validation: (value: any) => this.isString(value) }],
+    startsWith: [
+      { field: ['String'], validation: (value: any) => this.isString(value) },
+    ],
+    endsWith: [
+      { field: ['String'], validation: (value: any) => this.isString(value) },
+    ],
+    contains: [
+      { field: ['String'], validation: (value: any) => this.isString(value) },
+    ],
     less: [
       { field: ['Date'], validation: (value: any) => this.isDate(value) },
       { field: ['Number'], validation: (value: any) => this.isNumber(value) },
@@ -53,20 +91,56 @@ export class QueryBuilderParser {
       { field: ['Number'], validation: (value: any) => this.isNumber(value) },
     ],
     in: [
-      { field: ['String'], validation: (value: any) => this.isArrayOf(value, this.isString) },
-      { field: ['Binary'], validation: (value: any) => this.isArrayOf(value, this.isBinary) },
-      { field: ['ObjectId'], validation: (value: any) => this.isArrayOf(value, this.isObjectId) },
-      { field: ['Date'], validation: (value: any) => this.isArrayOf(value, this.isDate) },
-      { field: ['Number'], validation: (value: any) => this.isArrayOf(value, this.isNumber) },
-      { field: ['Boolean'], validation: (value: any) => this.isArrayOf(value, this.isBoolean) },
+      {
+        field: ['String'],
+        validation: (value: any) => this.isArrayOf(value, this.isString),
+      },
+      {
+        field: ['Binary'],
+        validation: (value: any) => this.isArrayOf(value, this.isBinary),
+      },
+      {
+        field: ['ObjectId'],
+        validation: (value: any) => this.isArrayOf(value, this.isObjectId),
+      },
+      {
+        field: ['Date'],
+        validation: (value: any) => this.isArrayOf(value, this.isDate),
+      },
+      {
+        field: ['Number'],
+        validation: (value: any) => this.isArrayOf(value, this.isNumber),
+      },
+      {
+        field: ['Boolean'],
+        validation: (value: any) => this.isArrayOf(value, this.isBoolean),
+      },
     ],
     notIn: [
-      { field: ['String'], validation: (value: any) => this.isArrayOf(value, this.isString) },
-      { field: ['Binary'], validation: (value: any) => this.isArrayOf(value, this.isBinary) },
-      { field: ['ObjectId'], validation: (value: any) => this.isArrayOf(value, this.isObjectId) },
-      { field: ['Date'], validation: (value: any) => this.isArrayOf(value, this.isDate) },
-      { field: ['Number'], validation: (value: any) => this.isArrayOf(value, this.isNumber) },
-      { field: ['Boolean'], validation: (value: any) => this.isArrayOf(value, this.isBoolean) },
+      {
+        field: ['String'],
+        validation: (value: any) => this.isArrayOf(value, this.isString),
+      },
+      {
+        field: ['Binary'],
+        validation: (value: any) => this.isArrayOf(value, this.isBinary),
+      },
+      {
+        field: ['ObjectId'],
+        validation: (value: any) => this.isArrayOf(value, this.isObjectId),
+      },
+      {
+        field: ['Date'],
+        validation: (value: any) => this.isArrayOf(value, this.isDate),
+      },
+      {
+        field: ['Number'],
+        validation: (value: any) => this.isArrayOf(value, this.isNumber),
+      },
+      {
+        field: ['Boolean'],
+        validation: (value: any) => this.isArrayOf(value, this.isBoolean),
+      },
     ],
     isNull: [
       {
@@ -84,7 +158,10 @@ export class QueryBuilderParser {
 
   private filter: FilterQuery<any>;
 
-  constructor(private readonly ruleSet: any, private readonly mapTypes: { [key: string]: string }) {
+  constructor(
+    private readonly ruleSet: any,
+    private readonly mapTypes: { [key: string]: string },
+  ) {
     try {
       this.filter = this.parseRuleSet(this.ruleSet);
     } catch (err) {
@@ -126,36 +203,44 @@ export class QueryBuilderParser {
   private parseRule(rule: Rule): FilterQuery<any> {
     const schemaType = this.getSchemaType(rule.field);
     if (schemaType === undefined) throw new Error('Field in rule not exists.');
-    const type = schemaType.indexOf('Schema') === 0 ? schemaType.substring(6) : schemaType;
+    const type =
+      schemaType.indexOf('Schema') === 0 ? schemaType.substring(6) : schemaType;
     // Set value by schema type
     let value: any;
     if (rule.value !== null) {
       switch (type) {
         case 'String':
           value = !Array.isArray(rule.value)
-            ? (<string>(<unknown>rule.value)).trim()
-            : (<string[]>(<unknown>rule.value)).map((val: string) => val.trim());
+            ? castToString(rule.value, { trim: true })
+            : castToStringArray(rule.value, { trim: true });
           break;
         case 'Binary':
           value = !Array.isArray(rule.value)
-            ? this.toBinary(<string>(<unknown>rule.value))
-            : (<string[]>(<unknown>rule.value)).map((val: string) => this.toBinary(val));
+            ? castToUUIDv4(rule.value)
+            : castToUUIDv4Array(rule.value);
           break;
         case 'ObjectId':
           value = !Array.isArray(rule.value)
-            ? new ObjectId(<string>(<unknown>rule.value))
-            : (<string[]>(<unknown>rule.value)).map((val: string) => new ObjectId(val));
+            ? castToObjectId(rule.value)
+            : castToObjectIdArray(rule.value);
           break;
         case 'Date':
           value = !Array.isArray(rule.value)
-            ? dayjs(<string>(<unknown>rule.value)).toDate()
-            : (<string[]>(<unknown>rule.value)).map((val: string) => dayjs(val).toDate());
+            ? castToDate(rule.value)
+            : castToDateArray(rule.value);
+          break;
+        case 'Boolean':
+          value = !Array.isArray(rule.value)
+            ? castToBoolean(rule.value)
+            : castToBooleanArray(rule.value);
           break;
         case 'Number':
-        case 'Boolean':
-          throw new InternalServerErrorException('NOT_IMPLEMENTED_YET');
+          value = !Array.isArray(rule.value)
+            ? castToNumber(rule.value)
+            : castToNumberArray(rule.value);
+          break;
         default:
-          value = rule.value;
+          throw new InternalServerErrorException(`${type}_NOT_IMPLEMENTED_YET`);
       }
     } else {
       value = null;
@@ -170,13 +255,19 @@ export class QueryBuilderParser {
         filter[rule.field] = { $ne: value };
         break;
       case 'startsWith':
-        filter[rule.field] = { $regex: new RegExp('^' + this._regexScape(value) + '.*', 'iu') };
+        filter[rule.field] = {
+          $regex: new RegExp('^' + this._regexScape(value) + '.*', 'iu'),
+        };
         break;
       case 'endsWith':
-        filter[rule.field] = { $regex: new RegExp('.*' + this._regexScape(value) + '$', 'iu') };
+        filter[rule.field] = {
+          $regex: new RegExp('.*' + this._regexScape(value) + '$', 'iu'),
+        };
         break;
       case 'contains':
-        filter[rule.field] = { $regex: new RegExp('.*' + this._regexScape(value) + '.*', 'iu') };
+        filter[rule.field] = {
+          $regex: new RegExp('.*' + this._regexScape(value) + '.*', 'iu'),
+        };
         break;
       case 'less':
         filter[rule.field] = { $lt: rule.value };
@@ -217,7 +308,10 @@ export class QueryBuilderParser {
       if (!keys.includes(key)) return false;
     }
     // type validation
-    return (obj['condition'] === 'and' || obj['condition'] === 'or') && Array.isArray(obj['rules']);
+    return (
+      (obj['condition'] === 'and' || obj['condition'] === 'or') &&
+      Array.isArray(obj['rules'])
+    );
   }
 
   private isValidRule(obj: any) {
@@ -231,16 +325,24 @@ export class QueryBuilderParser {
     }
     const constraints = this.constraints[obj.operation];
     // types validation
-    if (typeof obj.field !== 'string' || typeof obj.operation !== 'string' || !constraints)
+    if (
+      typeof obj.field !== 'string' ||
+      typeof obj.operation !== 'string' ||
+      !constraints
+    )
       return false;
     // get field type for compat with operation
     const schemaType = this.getSchemaType(obj.field);
     if (schemaType === undefined) throw new Error('Field in rule not exists.');
-    const type = schemaType.indexOf('Schema') === 0 ? schemaType.substring(6) : schemaType;
+    const type =
+      schemaType.indexOf('Schema') === 0 ? schemaType.substring(6) : schemaType;
     // validate by operation
     let found = false;
     for (const constraint of constraints) {
-      if (constraint.field.includes(type) || constraint.field.includes('Schema' + type)) {
+      if (
+        constraint.field.includes(type) ||
+        constraint.field.includes('Schema' + type)
+      ) {
         found = true;
         if (!constraint.validation(obj.value)) {
           throw new Error(`Constraint error on rule: ${obj}`);
@@ -303,12 +405,5 @@ export class QueryBuilderParser {
       }
     }
     return true;
-  }
-
-  private toBinary(value: any) {
-    if (this.isUUIDv4(value)) {
-      return toUUIDv4(value);
-    }
-    throw new Error('Unknown binary format');
   }
 }
