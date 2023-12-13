@@ -2,6 +2,7 @@ import { Schema } from '@nestjs/mongoose';
 import { _MetadataStorageV1 } from '../../helpers/metadata-storage';
 import { SchemaOptions } from '../../types';
 import { METADATA } from '../../constants';
+// import { METADATA as METADATA_FORMS } from '@wandu/nestjs-dynamic-forms';
 
 export function $Schema(options: SchemaOptions = {}): ClassDecorator {
   return (target) => {
@@ -17,18 +18,18 @@ export function $Schema(options: SchemaOptions = {}): ClassDecorator {
       );
     }
 
-    if (options?.formItem !== undefined && options.formItem) {
-      if (typeof options.formItem === 'function') {
-        const Decorator = options.formItem;
-        Decorator(target);
-      } else {
-        _MetadataStorageV1.setMetadata(
-          METADATA.FORM_ITEM_BASIC,
-          { opts: options.formItem, kind: 'OBJECT' },
-          target,
-        );
-      }
-    }
+    // if (options?.formItem !== undefined && options.formItem) {
+    //   if (typeof options.formItem === 'function') {
+    //     const Decorator = options.formItem;
+    //     Decorator(target);
+    //   } else {
+    //     _MetadataStorageV1.setMetadata(
+    //       METADATA_FORMS.FORM_ITEM_OPTS,
+    //       { opts: options.formItem, kind: 'OBJECT' },
+    //       target,
+    //     );
+    //   }
+    // }
 
     // Apply custom decorators
     if (options.decorators !== undefined) {

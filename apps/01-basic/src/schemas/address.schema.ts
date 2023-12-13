@@ -1,3 +1,4 @@
+import { FormItemKindEnum } from '@wandu/nestjs-dynamic-forms';
 import {
   $Schema,
   $PropStringOptional,
@@ -6,7 +7,9 @@ import {
 
 @$Schema()
 export class Address {
-  @$PropStringOptional({ isEmail: true })
+  @$PropStringOptional({
+    isEmail: true,
+  })
   street!: string | null;
 
   @$PropNumberOptional()

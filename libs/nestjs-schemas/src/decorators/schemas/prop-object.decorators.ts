@@ -150,7 +150,7 @@ function setProp(
     },
     validators: [],
     decorators: { __propDef: [] },
-    formItem: opts.formItem ?? null,
+    formItem: opts.formItem ?? { kind: 'DEFAULT' },
     opts,
   };
 
