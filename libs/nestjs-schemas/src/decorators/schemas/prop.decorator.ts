@@ -3,7 +3,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
 import { _MetadataStorageV1 } from '../../helpers/metadata-storage';
 import { PropertyOptions } from '../../types';
-import { METADATA } from '../../constants';
 
 export function $Prop(options: PropertyOptions = {}): PropertyDecorator {
   return (target: any, property: any) => {
@@ -121,13 +120,6 @@ export function $Prop(options: PropertyOptions = {}): PropertyDecorator {
             if (typeof options.formItem === 'function') {
               const Decorator = options.formItem;
               Decorator(target, property);
-            } else {
-              _MetadataStorageV1.setMetadata(
-                METADATA.FORM_ITEM_OPTS,
-                options.formItem,
-                target,
-                property,
-              );
             }
           }
           break;

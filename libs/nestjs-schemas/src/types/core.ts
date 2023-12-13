@@ -10,7 +10,6 @@ import {
   TypeHelpOptions,
   TypeOptions,
 } from 'class-transformer';
-import { FormItemOpts, FormItemCommonOpts } from '@wandu/nestjs-dynamic-forms';
 
 export type Nullable<T> = T | null;
 
@@ -53,12 +52,6 @@ export type SchemaOptions<T = any> = {
   mongoose?: mongoose.SchemaOptions;
   validation?: SchemaValidationFn<T>;
   decorators?: { [key: string]: ClassDecorator[] };
-  // formItem?:
-  //   | ClassDecorator
-  //   | {
-  //       label?: string | null;
-  //       description?: string | null;
-  //     };
 };
 
 export type PropertyOptions = {
@@ -80,7 +73,7 @@ export type PropertyOptions = {
   validators?: PropertyDecorator[];
   mongoose?: PropOptions;
   decorators?: { [key: string]: PropertyDecorator[] };
-  formItem?: PropertyDecorator | FormItemOpts | FormItemCommonOpts;
+  formItem?: PropertyDecorator | null;
   opts?: any;
 };
 
