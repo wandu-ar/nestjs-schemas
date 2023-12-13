@@ -86,6 +86,7 @@ export type PropertyOptions = {
         label?: string | null;
         readonly?: boolean;
         disabled?: boolean;
+        preview?: boolean;
         description?: string | null;
         hint?: string | null;
         childTitle?: string | null;
