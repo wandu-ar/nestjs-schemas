@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
 import { _MetadataStorageV1 } from '../../helpers/metadata-storage';
 import { PropertyOptions } from '../../types';
-import { METADATA } from '@wandu/nestjs-dynamic-forms';
+import { METADATA } from '../../constants';
 
 export function $Prop(options: PropertyOptions = {}): PropertyDecorator {
   return (target: any, property: any) => {
